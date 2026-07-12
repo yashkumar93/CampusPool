@@ -10,7 +10,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Route as RouteIcon, ShieldCheck, Eye, EyeOff, Loader2, Mail, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
-import { CAMPUSES, getActiveCampus } from "@/lib/campuses";
+import { CAMPUSES, getActiveCampus, ALLOWED_EMAIL_DOMAINS } from "@/lib/campuses";
 
 function getPasswordStrength(password: string): { level: number; label: string; color: string } {
   let score = 0;
@@ -60,6 +60,17 @@ export function AuthForm() {
     }
   }, []);
 
+  // Auto-select campus if the typed email's domain matches any campus config
+  useEffect(() => {
+    const domain = email.toLowerCase().trim().split("@")[1] ?? "";
+    if (domain) {
+      const match = CAMPUSES.find((c) => c.emailDomains.includes(domain));
+      if (match) {
+        setSelectedCampusId(match.id);
+      }
+    }
+  }, [email]);
+
   const currentCampus = CAMPUSES.find((c) => c.id === selectedCampusId) || activeCampus;
   const allowedDomains = currentCampus.emailDomains;
 
@@ -69,6 +80,10 @@ export function AuthForm() {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    const domain = email.toLowerCase().trim().split("@")[1] ?? "";
+    if (!ALLOWED_EMAIL_DOMAINS.includes(domain)) {
+      return toast.error("Access denied. Logins are restricted to whitelisted university emails.");
+    }
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
     setLoading(false);
@@ -85,6 +100,9 @@ export function AuthForm() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     const domain = email.toLowerCase().trim().split("@")[1] ?? "";
+    if (!ALLOWED_EMAIL_DOMAINS.includes(domain)) {
+      return toast.error("Access denied. Registrations are restricted to whitelisted university emails.");
+    }
     if (!allowedDomains.includes(domain)) {
       return toast.error(
         `Use your ${currentCampus.name} email (ending in: ${allowedDomains.join(", ")})`
