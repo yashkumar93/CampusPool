@@ -1,0 +1,35 @@
+{
+  "pages": {
+    "/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/layout.css",
+      "static/chunks/app/layout.js"
+    ],
+    "/(authenticated)/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(authenticated)/layout.js"
+    ],
+    "/(authenticated)/rides/[rideId]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(authenticated)/rides/[rideId]/page.js"
+    ],
+    "/(authenticated)/home/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(authenticated)/home/page.js"
+    ],
+    "/(authenticated)/rides/new/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(authenticated)/rides/new/page.js"
+    ],
+    "/(authenticated)/profile/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(authenticated)/profile/page.js"
+    ]
+  }
+}
