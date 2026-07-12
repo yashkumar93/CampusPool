@@ -2,9 +2,9 @@
   "/_not-found/page": "/_not-found",
   "/auth/page": "/auth",
   "/page": "/",
-  "/(authenticated)/home/page": "/home",
+  "/(authenticated)/groups/[groupId]/page": "/groups/[groupId]",
   "/(authenticated)/rides/[rideId]/page": "/rides/[rideId]",
   "/(authenticated)/profile/page": "/profile",
-  "/(authenticated)/rides/new/page": "/rides/new",
-  "/(authenticated)/groups/[groupId]/page": "/groups/[groupId]"
+  "/(authenticated)/home/page": "/home",
+  "/(authenticated)/rides/new/page": "/rides/new"
 }

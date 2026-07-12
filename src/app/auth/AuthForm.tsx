@@ -128,7 +128,11 @@ export function AuthForm() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Floating canopy orbs */}
+      <div className="pointer-events-none absolute -left-40 top-20 h-[500px] w-[500px] rounded-full bg-[#4f772d]/8 blur-[120px] animate-[drift_20s_ease-in-out_infinite]" aria-hidden="true" />
+      <div className="pointer-events-none absolute right-[-10%] top-[-5%] h-[400px] w-[400px] rounded-full bg-[#90a955]/6 blur-[100px] animate-[drift_25s_ease-in-out_infinite_reverse]" aria-hidden="true" />
+      <div className="pointer-events-none absolute left-[30%] bottom-10 h-[300px] w-[300px] rounded-full bg-[#ecf39e]/4 blur-[80px] animate-[drift_18s_ease-in-out_infinite]" aria-hidden="true" />
       <header className="border-b border-border/60">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
           <Link href="/" className="flex items-center gap-2 font-semibold">
@@ -141,7 +145,7 @@ export function AuthForm() {
         </div>
       </header>
 
-      <div className="mx-auto flex max-w-md flex-col px-5 py-16">
+      <div className="relative mx-auto flex max-w-md flex-col px-5 py-16 animate-fade-in-up">
         <div className="text-xs uppercase tracking-[0.2em] text-primary flex items-center gap-1.5 font-semibold">
           <ShieldCheck className="h-3.5 w-3.5" /> {currentCampus.name} verified access
         </div>

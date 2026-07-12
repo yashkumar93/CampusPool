@@ -1,10 +1,7 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/auth/page": "app/auth/page.js",
   "/page": "app/page.js",
-  "/(authenticated)/home/page": "app/(authenticated)/home/page.js",
   "/(authenticated)/rides/[rideId]/page": "app/(authenticated)/rides/[rideId]/page.js",
-  "/(authenticated)/profile/page": "app/(authenticated)/profile/page.js",
+  "/(authenticated)/home/page": "app/(authenticated)/home/page.js",
   "/(authenticated)/rides/new/page": "app/(authenticated)/rides/new/page.js",
-  "/(authenticated)/groups/[groupId]/page": "app/(authenticated)/groups/[groupId]/page.js"
+  "/(authenticated)/profile/page": "app/(authenticated)/profile/page.js"
 }

@@ -130,7 +130,8 @@ export const ALLOWED_EMAIL_DOMAINS = [
   "symbiosis.ac.in",
   "mitwpu.edu.in",
   "coep.org.in",
-  "pccoepune.com"
+  "pccoepune.com",
+  "nxtwave.co.in"
 ];
 
 export const CAMPUSES: CampusConfig[] = [
@@ -215,7 +216,7 @@ export const CAMPUSES: CampusConfig[] = [
       "iiita.ac.in", "jadavpuruniversity.in", "kiit.ac.in", "soa.ac.in",
       "thapar.edu", "chitkara.edu.in", "lnmiit.ac.in", "vitbhopal.ac.in",
       "sharda.ac.in", "galgotiasuniversity.edu.in", "lpu.in", "cuonline.ac.in",
-      "symbiosis.ac.in", "mitwpu.edu.in", "coep.org.in", "pccoepune.com"
+      "symbiosis.ac.in", "mitwpu.edu.in", "coep.org.in", "pccoepune.com", "nxtwave.co.in"
     ],
     defaultCollegeName: "Partner Universities",
     defaultCoordinates: { lat: 13.0827, lng: 80.2707 },

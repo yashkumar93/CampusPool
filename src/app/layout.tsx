@@ -1,12 +1,20 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Bricolage_Grotesque, Figtree } from "next/font/google";
 import "../styles.css";
 import { Providers } from "./providers";
 
-const inter = Inter({
+const figtree = Figtree({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-sans-fallback",
   display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
+
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-heading-fallback",
+  display: "swap",
+  weight: ["400", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -45,12 +53,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://rsms.me" />
-        <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
-      </head>
-      <body>
+    <html lang="en" className={`${figtree.variable} ${bricolage.variable}`} suppressHydrationWarning>
+      <head />
+      <body style={{
+        ["--font-sans-family" as any]: "var(--font-sans-fallback)",
+        ["--font-heading-family" as any]: "var(--font-heading-fallback)",
+      }}>
         <Providers>{children}</Providers>
       </body>
     </html>

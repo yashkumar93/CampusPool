@@ -32,16 +32,17 @@ function relTime(iso: string) {
 export default function HomePage() {
   const geo = useGeolocation();
   return (
-    <div className="space-y-8">
-      <section className="surface-card overflow-hidden p-0">
+    <div className="space-y-8 animate-fade-in-up">
+      <section className="surface-card overflow-hidden p-0 relative">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#4f772d]/10 via-transparent to-[#ecf39e]/5" />
         <div className="relative isolate flex flex-col gap-5 p-6 sm:p-7">
           <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/15 blur-3xl" />
           <div>
-            <div className="text-xs uppercase tracking-widest text-primary">CampusPool</div>
-            <h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">
-              Where to today?
+            <div className="text-[10px] uppercase tracking-[0.25em] text-primary font-semibold">CampusPool</div>
+            <h1 className="mt-1.5 text-3xl font-bold tracking-tight sm:text-4xl leading-[1.1]">
+              Where to <span className="italic">today</span>?
             </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
               Get a seat with a verified classmate in seconds.
             </p>
           </div>
@@ -75,17 +76,23 @@ export default function HomePage() {
         </div>
       </section>
 
-      <Suspense fallback={<LiveRidesSkeleton />}>
-        <LiveRides />
-      </Suspense>
+      <div className="animate-fade-in-up" style={{ animationDelay: '150ms' }}>
+        <Suspense fallback={<LiveRidesSkeleton />}>
+          <LiveRides />
+        </Suspense>
+      </div>
 
-      <Suspense fallback={<RidesSkeleton />}>
-        <MyRides />
-      </Suspense>
+      <div className="animate-fade-in-up" style={{ animationDelay: '300ms' }}>
+        <Suspense fallback={<RidesSkeleton />}>
+          <MyRides />
+        </Suspense>
+      </div>
 
-      <Suspense fallback={<GroupsSkeleton />}>
-        <MyGroups />
-      </Suspense>
+      <div className="animate-fade-in-up" style={{ animationDelay: '450ms' }}>
+        <Suspense fallback={<GroupsSkeleton />}>
+          <MyGroups />
+        </Suspense>
+      </div>
     </div>
   );
 }

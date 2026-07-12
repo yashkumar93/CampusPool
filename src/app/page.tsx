@@ -34,7 +34,7 @@ export default function LandingPage() {
             <ShieldCheck className="h-3.5 w-3.5 text-primary" /> Verified university students only
           </div>
           <h1 className="relative mt-5 max-w-3xl text-4xl font-semibold leading-[1.05] tracking-tight sm:text-6xl">
-            Share the ride. Split the cost. <span className="text-primary">Skip the stranger cab.</span>
+            Share the ride.<br className="hidden sm:block" /> Split the cost. <span className="bg-gradient-to-r from-[#ecf39e] via-[#90a955] to-[#4f772d] bg-clip-text text-transparent">Skip the stranger cab.</span>
           </h1>
           <p className="relative mt-6 max-w-xl text-base text-muted-foreground sm:text-lg">
             CampusPool matches you with verified classmates heading the same way at
@@ -51,7 +51,7 @@ export default function LandingPage() {
             </a>
           </div>
 
-          <div className="relative mt-16 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="relative mt-16 grid grid-cols-2 gap-4 sm:grid-cols-4">
             {[
               { k: "80%", v: "route overlap detected" },
               { k: "±20m", v: "flexible departure window" },
@@ -60,11 +60,11 @@ export default function LandingPage() {
             ].map((s, i) => (
               <div
                 key={s.v}
-                className="surface-card p-4 opacity-0 animate-[fadeInUp_0.5s_ease_forwards]"
-                style={{ animationDelay: `${i * 100 + 200}ms` }}
+                className="surface-card p-5 opacity-0 animate-[fadeInUp_0.5s_ease_forwards] hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-300"
+                style={{ animationDelay: `${i * 120 + 300}ms` }}
               >
-                <div className="text-2xl font-semibold tracking-tight">{s.k}</div>
-                <div className="mt-1 text-xs text-muted-foreground">{s.v}</div>
+                <div className="text-3xl font-bold tracking-tighter bg-gradient-to-br from-[#ecf39e] to-[#90a955] bg-clip-text text-transparent">{s.k}</div>
+                <div className="mt-1.5 text-xs text-muted-foreground leading-relaxed">{s.v}</div>
               </div>
             ))}
           </div>
@@ -72,6 +72,9 @@ export default function LandingPage() {
 
         <section id="how" className="border-t border-border/60 bg-surface/50">
           <div className="mx-auto max-w-6xl px-5 py-20">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+            </div>
             <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">How CampusPool works</h2>
             <div className="mt-10 grid gap-4 md:grid-cols-3">
               {[
@@ -123,7 +126,7 @@ export default function LandingPage() {
         <section className="border-t border-border/60 bg-surface/50">
           <div className="mx-auto max-w-3xl px-5 py-20 text-center">
             <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-              Your next ride is already leaving.
+              Your next ride is <span className="italic">already</span> leaving.
             </h2>
             <p className="mt-3 text-muted-foreground">
               Join CampusPool with your college email and find a group in minutes.

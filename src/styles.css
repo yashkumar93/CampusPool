@@ -5,8 +5,9 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * CampusPool design system — inspired by Uber/Rapido:
- * near-black surfaces, single warm lime accent, dense info cards.
+ * CampusPool — Evergreen Forest design system
+ * Deep woodland darks, lime-cream accents, layered atmospheric depth.
+ * Typography: Bricolage Grotesque (headings) + Figtree (body)
  */
 
 @theme inline {
@@ -54,57 +55,59 @@
   --color-surface-foreground: var(--surface-foreground);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
-  --font-sans:
-    "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+  --font-sans: var(--font-sans);
+  --font-heading: var(--font-heading);
 }
 
 :root {
-  --radius: 0.5rem;
+  --radius: 0.625rem;
+  --font-sans: var(--font-sans-family, sans-serif);
+  --font-heading: var(--font-heading-family, serif);
   /* Evergreen Forest Theme */
-  --background: #132a13;
-  --foreground: #f0f7f0;
-  --surface: #1f3d20;
-  --surface-foreground: #ffffff;
-  --card: #1f3d20;
-  --card-foreground: #ffffff;
-  --popover: #1f3d20;
-  --popover-foreground: #ffffff;
+  --background: #0e1f0e;
+  --foreground: #e8f0e4;
+  --surface: #172917;
+  --surface-foreground: #f0f7f0;
+  --card: #172917;
+  --card-foreground: #f0f7f0;
+  --popover: #1a2e1a;
+  --popover-foreground: #f0f7f0;
   --primary: #ecf39e;
-  --primary-foreground: #132a13;
-  --secondary: #31572c;
-  --secondary-foreground: #ffffff;
-  --muted: #2c4728;
-  --muted-foreground: #a3c09b;
-  --accent: #ecf39e;
-  --accent-foreground: #132a13;
-  --destructive: #991b1b;
+  --primary-foreground: #0e1f0e;
+  --secondary: #243d22;
+  --secondary-foreground: #e8f0e4;
+  --muted: #1e331e;
+  --muted-foreground: #8aad82;
+  --accent: #d4e67a;
+  --accent-foreground: #0e1f0e;
+  --destructive: #bf3b3b;
   --destructive-foreground: #ffffff;
-  --success: #90a955;
-  --success-foreground: #132a13;
-  --border: #31572c;
-  --input: #244021;
-  --ring: #ecf39e;
+  --success: #7a9a44;
+  --success-foreground: #0e1f0e;
+  --border: #263e24;
+  --input: #1c321b;
+  --ring: #d4e67a;
   --chart-1: #31572c;
   --chart-2: #4f772d;
   --chart-3: #90a955;
   --chart-4: #ecf39e;
   --chart-5: #132a13;
-  --sidebar: #102410;
-  --sidebar-foreground: #a3c09b;
+  --sidebar: #0a180a;
+  --sidebar-foreground: #8aad82;
   --sidebar-primary: #ecf39e;
-  --sidebar-primary-foreground: #132a13;
-  --sidebar-accent: #1d371d;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #1d371d;
+  --sidebar-primary-foreground: #0e1f0e;
+  --sidebar-accent: #162716;
+  --sidebar-accent-foreground: #e8f0e4;
+  --sidebar-border: #1a2e1a;
   --sidebar-ring: #ecf39e;
 }
 
 .dark {
-  --background: #132a13;
-  --foreground: #f0f7f0;
+  --background: #0e1f0e;
+  --foreground: #e8f0e4;
 }
 
+/* ── Base layer ── */
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -122,73 +125,175 @@
 
   body {
     background-color: var(--color-background);
-    background-image: radial-gradient(
-      ellipse 80% 60% at 50% 0%,
-      rgba(49, 87, 44, 0.45),
-      transparent 70%
-    );
+    background-image:
+      /* Top canopy glow */
+      radial-gradient(ellipse 90% 50% at 50% -5%, rgba(79, 119, 45, 0.3), transparent 60%),
+      /* Bottom-right warmth */
+      radial-gradient(ellipse 40% 50% at 95% 90%, rgba(144, 169, 85, 0.06), transparent 50%),
+      /* Subtle cross-hatch texture */
+      linear-gradient(rgba(236, 243, 158, 0.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(236, 243, 158, 0.018) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+    background-attachment: fixed;
     color: var(--color-foreground);
     font-family: var(--font-sans);
+    font-feature-settings: "ss01", "ss02", "cv01";
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+
+  /* Editorial heading typography */
   h1, h2, h3, h4 {
-    letter-spacing: -0.015em;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  h1 { letter-spacing: -0.035em; }
+
+  /* ── Entrance animations ── */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* Floating background orb drift */
+  @keyframes drift {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(15px, -20px) scale(1.02); }
+    50% { transform: translate(-10px, 10px) scale(0.98); }
+    75% { transform: translate(20px, 15px) scale(1.01); }
+  }
+
+  /* Subtle pulse for live indicators */
+  @keyframes softPulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    opacity: 0;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease both;
+    opacity: 0;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    opacity: 0;
+  }
+
+  /* Selection styling */
+  ::selection {
+    background-color: rgba(236, 243, 158, 0.25);
+    color: #f0f7f0;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--muted-foreground);
   }
 }
 
+/* ── Surface card ── */
 @utility surface-card {
-  background-color: var(--color-surface);
+  background: linear-gradient(
+    135deg,
+    var(--color-surface) 0%,
+    color-mix(in oklch, var(--color-surface), var(--color-background) 15%) 100%
+  );
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  transition: all 0.2s ease;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(236, 243, 158, 0.03);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── Shimmer skeleton animation ── */
+/* ── Shimmer skeleton — forest-tuned ── */
 @keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 @utility shimmer {
   background: linear-gradient(
     90deg,
-    oklch(0.22 0.006 260) 25%,
-    oklch(0.28 0.008 260) 50%,
-    oklch(0.22 0.006 260) 75%
+    var(--muted) 25%,
+    color-mix(in oklch, var(--muted), var(--primary) 8%) 50%,
+    var(--muted) 75%
   );
   background-size: 200% 100%;
-  animation: shimmer 1.8s ease-in-out infinite;
+  animation: shimmer 2s ease-in-out infinite;
+  border-radius: var(--radius-sm);
 }
 
-/* ── Glass-card utility ── */
+/* ── Glass-card — deep forest glass ── */
 @utility glass-card {
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  background: oklch(0.19 0.006 260 / 0.55);
-  border: 1px solid oklch(0.28 0.008 260 / 0.5);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  background: linear-gradient(
+    135deg,
+    rgba(23, 41, 23, 0.7),
+    rgba(14, 31, 14, 0.5)
+  );
+  border: 1px solid rgba(38, 62, 36, 0.6);
   border-radius: var(--radius-lg);
-  transition: all 0.2s ease;
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(236, 243, 158, 0.04);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── Fade-in-up animation for stagger effects ── */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ── Glow utility for CTAs / active states ── */
+/* ── Glow utility — layered forest glow ── */
 @utility glow-primary {
   box-shadow:
-    0 0 12px oklch(0.88 0.18 118 / 0.35),
-    0 0 4px oklch(0.88 0.18 118 / 0.2);
+    0 0 0 1px rgba(212, 230, 122, 0.15),
+    0 0 16px rgba(212, 230, 122, 0.2),
+    0 0 40px rgba(144, 169, 85, 0.08);
+  transition: box-shadow 0.3s ease;
+}
+
+/* ── Text gradient ── */
+@utility text-gradient-forest {
+  background: linear-gradient(135deg, #ecf39e 0%, #90a955 50%, #4f772d 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
