@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Route as RouteIcon, ShieldCheck, Eye, EyeOff, Loader2, Mail, CheckCircle2 } from "lucide-react";
+import { Route as RouteIcon, ShieldCheck, Eye, EyeOff, Loader2, Mail, CheckCircle2, Check, Search } from "lucide-react";
 import Link from "next/link";
 import { CAMPUSES, getActiveCampus, ALLOWED_EMAIL_DOMAINS } from "@/lib/campuses";
 
@@ -26,6 +26,123 @@ function getPasswordStrength(password: string): { level: number; label: string; 
     color: colors[Math.max(0, score - 1)] ?? "bg-destructive",
   };
 }
+
+const ORGANIZATIONS: { name: string; campusId: string; domain: string }[] = [
+  { name: "VIT Vellore", campusId: "vit", domain: "vit.ac.in" },
+  { name: "VIT-AP University", campusId: "vitap", domain: "vitap.ac.in" },
+  { name: "SRM Kattankulathur", campusId: "srm", domain: "srmist.edu.in" },
+  { name: "SRM University AP", campusId: "other", domain: "srmap.edu.in" },
+  { name: "Anna University", campusId: "other", domain: "annauniv.edu" },
+  { name: "IIT Madras", campusId: "other", domain: "iitm.ac.in" },
+  { name: "SSN College of Engineering", campusId: "other", domain: "ssn.edu.in" },
+  { name: "SVCE (Sri Venkateswara College of Engineering)", campusId: "other", domain: "svce.ac.in" },
+  { name: "Rajalakshmi Engineering College", campusId: "other", domain: "rajalakshmi.edu.in" },
+  { name: "Sathyabama University", campusId: "other", domain: "sathyabama.ac.in" },
+  { name: "Hindustan University", campusId: "other", domain: "hindustanuniv.ac.in" },
+  { name: "Saveetha University", campusId: "other", domain: "saveetha.ac.in" },
+  { name: "Vel Tech University", campusId: "other", domain: "veltech.edu.in" },
+  { name: "B.S. Abdur Rahman Crescent Institute", campusId: "other", domain: "crescent.education" },
+  { name: "St. Joseph's Institute of Technology", campusId: "other", domain: "stjosephstechnology.ac.in" },
+  { name: "Jeppiaar Engineering College", campusId: "other", domain: "jeppiaarcollege.org" },
+  { name: "Panimalar Engineering College", campusId: "other", domain: "panimalar.ac.in" },
+  { name: "Sri Sairam Engineering College", campusId: "other", domain: "sairam.edu.in" },
+  { name: "Sri Sairam Institute of Technology", campusId: "other", domain: "sairamit.edu.in" },
+  { name: "Loyola College", campusId: "other", domain: "loyolacollege.edu" },
+  { name: "Madras Christian College", campusId: "other", domain: "mcc.edu.in" },
+  { name: "D.G. Vaishnav College", campusId: "other", domain: "dgvaishnavcollege.edu.in" },
+  { name: "Ethiraj College for Women", campusId: "other", domain: "ethirajcollege.edu.in" },
+  { name: "Women's Christian College", campusId: "other", domain: "wcc.edu.in" },
+  { name: "University of Madras", campusId: "other", domain: "madrasuniversity.ac.in" },
+  { name: "IIT Bombay", campusId: "other", domain: "iitb.ac.in" },
+  { name: "IIT Delhi", campusId: "other", domain: "iitd.ac.in" },
+  { name: "IIT Kanpur", campusId: "other", domain: "iitk.ac.in" },
+  { name: "IIT Kharagpur", campusId: "other", domain: "iitkgp.ac.in" },
+  { name: "IIT Guwahati", campusId: "other", domain: "iitg.ac.in" },
+  { name: "IIT Roorkee", campusId: "other", domain: "iitr.ac.in" },
+  { name: "IIT Hyderabad", campusId: "other", domain: "iith.ac.in" },
+  { name: "IIT Bhubaneswar", campusId: "other", domain: "iitbbs.ac.in" },
+  { name: "IIT Jodhpur", campusId: "other", domain: "iitj.ac.in" },
+  { name: "IIT Mandi", campusId: "other", domain: "iitmandi.ac.in" },
+  { name: "IIT Gandhinagar", campusId: "other", domain: "iitgn.ac.in" },
+  { name: "IIIT Hyderabad", campusId: "other", domain: "iiit.ac.in" },
+  { name: "IIIT Bangalore", campusId: "other", domain: "iiitb.ac.in" },
+  { name: "IIIT Delhi", campusId: "other", domain: "iiitd.ac.in" },
+  { name: "IIIT Lucknow", campusId: "other", domain: "iiitl.ac.in" },
+  { name: "IIITDM Kancheepuram", campusId: "other", domain: "iiitdm.ac.in" },
+  { name: "IIIT Kottayam", campusId: "other", domain: "iiitkottayam.ac.in" },
+  { name: "IIIT Naya Raipur", campusId: "other", domain: "iiitnr.edu.in" },
+  { name: "IISc Bangalore", campusId: "other", domain: "iisc.ac.in" },
+  { name: "RV College of Engineering", campusId: "other", domain: "rvce.edu.in" },
+  { name: "BMS College of Engineering", campusId: "other", domain: "bmsce.ac.in" },
+  { name: "BMS Institute of Technology", campusId: "other", domain: "bmsit.in" },
+  { name: "M.S. Ramaiah Institute of Technology", campusId: "other", domain: "msrit.edu" },
+  { name: "PES University", campusId: "other", domain: "pes.edu" },
+  { name: "Christ University", campusId: "other", domain: "christuniversity.in" },
+  { name: "REVA University", campusId: "other", domain: "reva.edu.in" },
+  { name: "CMR Institute of Technology", campusId: "other", domain: "cmrit.ac.in" },
+  { name: "Nitte Meenakshi Institute of Technology", campusId: "other", domain: "nmit.ac.in" },
+  { name: "New Horizon College of Engineering", campusId: "other", domain: "newhorizonindia.edu" },
+  { name: "Jain University", campusId: "other", domain: "jainuniversity.ac.in" },
+  { name: "Alliance University", campusId: "other", domain: "alliance.edu.in" },
+  { name: "Presidency University", campusId: "other", domain: "presidencyuniversity.in" },
+  { name: "ACS College of Engineering", campusId: "other", domain: "acsce.edu.in" },
+  { name: "Dayananda Sagar College of Engineering", campusId: "other", domain: "dayanandasagar.edu" },
+  { name: "University of Hyderabad", campusId: "other", domain: "uohyd.ac.in" },
+  { name: "Osmania University", campusId: "other", domain: "osmania.ac.in" },
+  { name: "JNTU Hyderabad", campusId: "other", domain: "jntuh.ac.in" },
+  { name: "Chaitanya Bharathi Institute of Technology", campusId: "other", domain: "cbit.ac.in" },
+  { name: "Gokaraju Rangaraju Institute of Engineering and Technology", campusId: "other", domain: "griet.ac.in" },
+  { name: "CVR College of Engineering", campusId: "other", domain: "cvr.ac.in" },
+  { name: "VNR Vignana Jyothi Institute of Engineering and Technology", campusId: "other", domain: "vnrvjiet.in" },
+  { name: "Mahatma Gandhi Institute of Technology", campusId: "other", domain: "mgit.ac.in" },
+  { name: "Mahindra University", campusId: "other", domain: "mahindrauniversity.edu.in" },
+  { name: "Anurag University", campusId: "other", domain: "anurag.edu.in" },
+  { name: "MLR Institute of Technology", campusId: "other", domain: "mlrinstitutions.ac.in" },
+  { name: "Woxsen University", campusId: "other", domain: "woxsen.edu.in" },
+  { name: "IFHE Hyderabad", campusId: "other", domain: "ifheindia.org" },
+  { name: "K L University", campusId: "other", domain: "kluniversity.in" },
+  { name: "Vignan's Foundation for Science, Technology & Research", campusId: "other", domain: "vignan.ac.in" },
+  { name: "GITAM University", campusId: "other", domain: "gitam.edu" },
+  { name: "RGUKT", campusId: "other", domain: "rgukt.in" },
+  { name: "SRKR Engineering College", campusId: "other", domain: "srkr.edu.in" },
+  { name: "Aditya Engineering College", campusId: "other", domain: "aditya.ac.in" },
+  { name: "Aditya Engineering College (AEC)", campusId: "other", domain: "aec.edu.in" },
+  { name: "PVP Siddhartha Institute of Technology", campusId: "other", domain: "pvpsiddhartha.ac.in" },
+  { name: "RVR & JC College of Engineering", campusId: "other", domain: "rvrjc.ac.in" },
+  { name: "Velagapudi Ramakrishna Siddhartha Engineering College", campusId: "other", domain: "vrsiddhartha.ac.in" },
+  { name: "Sri Venkateswara University", campusId: "other", domain: "svuniversity.edu.in" },
+  { name: "JNTU Kakinada", campusId: "other", domain: "jntuku.edu.in" },
+  { name: "Andhra University", campusId: "other", domain: "andhrauniversity.edu.in" },
+  { name: "NIST University", campusId: "other", domain: "nist.edu" },
+  { name: "BITS Pilani", campusId: "other", domain: "bits-pilani.ac.in" },
+  { name: "Manipal Academy of Higher Education", campusId: "other", domain: "manipal.edu" },
+  { name: "Amity University", campusId: "other", domain: "amity.edu" },
+  { name: "Amity University (IN)", campusId: "other", domain: "amity.edu.in" },
+  { name: "Delhi Technological University", campusId: "other", domain: "dtu.ac.in" },
+  { name: "NIT Trichy", campusId: "other", domain: "nitt.edu" },
+  { name: "NIT Surathkal", campusId: "other", domain: "nitk.edu.in" },
+  { name: "NIT Warangal", campusId: "other", domain: "nitw.ac.in" },
+  { name: "NIT Calicut", campusId: "other", domain: "nitc.ac.in" },
+  { name: "NIT Rourkela", campusId: "other", domain: "nitrkl.ac.in" },
+  { name: "MNIT Jaipur", campusId: "other", domain: "mnit.ac.in" },
+  { name: "IIIT Allahabad", campusId: "other", domain: "iiita.ac.in" },
+  { name: "Jadavpur University", campusId: "other", domain: "jadavpuruniversity.in" },
+  { name: "KIIT University", campusId: "other", domain: "kiit.ac.in" },
+  { name: "Siksha 'O' Anusandhan", campusId: "other", domain: "soa.ac.in" },
+  { name: "Thapar Institute of Engineering and Technology", campusId: "other", domain: "thapar.edu" },
+  { name: "Chitkara University", campusId: "other", domain: "chitkara.edu.in" },
+  { name: "The LNM Institute of Information Technology", campusId: "other", domain: "lnmiit.ac.in" },
+  { name: "VIT Bhopal University", campusId: "other", domain: "vitbhopal.ac.in" },
+  { name: "Sharda University", campusId: "other", domain: "sharda.ac.in" },
+  { name: "Galgotias University", campusId: "other", domain: "galgotiasuniversity.edu.in" },
+  { name: "Lovely Professional University", campusId: "other", domain: "lpu.in" },
+  { name: "Chandigarh University", campusId: "other", domain: "cuonline.ac.in" },
+  { name: "Symbiosis International University", campusId: "other", domain: "symbiosis.ac.in" },
+  { name: "MIT World Peace University", campusId: "other", domain: "mitwpu.edu.in" },
+  { name: "COEP Technological University", campusId: "other", domain: "coep.org.in" },
+  { name: "Pimpri Chinchwad College of Engineering", campusId: "other", domain: "pccoepune.com" },
+  { name: "NxtWave", campusId: "other", domain: "nxtwave.co.in" },
+];
 
 export function AuthForm() {
   const router = useRouter();
@@ -60,19 +177,39 @@ export function AuthForm() {
     }
   }, []);
 
-  // Auto-select campus if the typed email's domain matches any campus config
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedOrg, setSelectedOrg] = useState<typeof ORGANIZATIONS[0] | null>(null);
+  const [focusedInput, setFocusedInput] = useState<"signin" | "signup" | null>(null);
+
+  // Auto-select campus if the typed email's domain matches any campus config or whitelist
   useEffect(() => {
     const domain = email.toLowerCase().trim().split("@")[1] ?? "";
     if (domain) {
-      const match = CAMPUSES.find((c) => c.emailDomains.includes(domain));
+      const match = ORGANIZATIONS.find((org) => org.domain === domain);
       if (match) {
-        setSelectedCampusId(match.id);
+        setSelectedCampusId(match.campusId);
+        setSelectedOrg(match);
+        setSearchQuery(match.name);
+      } else {
+        const matchCampus = CAMPUSES.find((c) => c.emailDomains.includes(domain));
+        if (matchCampus) {
+          setSelectedCampusId(matchCampus.id);
+          const defaultOrg = ORGANIZATIONS.find(org => org.campusId === matchCampus.id);
+          if (defaultOrg) {
+            setSelectedOrg(defaultOrg);
+            setSearchQuery(defaultOrg.name);
+          }
+        }
       }
     }
   }, [email]);
 
   const currentCampus = CAMPUSES.find((c) => c.id === selectedCampusId) || activeCampus;
-  const allowedDomains = currentCampus.emailDomains;
+  const allowedDomains = selectedOrg ? [selectedOrg.domain] : currentCampus.emailDomains;
+  const filteredOrgs = ORGANIZATIONS.filter((org) =>
+    org.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    org.domain.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const emailDomain = email.includes("@") ? email.toLowerCase().trim().split("@")[1] ?? "" : "";
   const showDomainHint = email.includes("@") && emailDomain.length > 0 && !allowedDomains.includes(emailDomain);
@@ -117,7 +254,7 @@ export function AuthForm() {
         emailRedirectTo: `${window.location.origin}/auth`,
         data: {
           full_name: fullName.trim(),
-          college: currentCampus.defaultCollegeName,
+          college: selectedOrg ? selectedOrg.name : currentCampus.defaultCollegeName,
         },
       },
     });
@@ -184,20 +321,72 @@ export function AuthForm() {
             <TabsContent value="signin" className="mt-6">
               <form onSubmit={handleSignIn} className="space-y-4">
                 {isGenericHost && (
-                  <div className="space-y-1.5">
-                    <Label htmlFor="si-college">Select your College</Label>
-                    <select
-                      id="si-college"
-                      value={selectedCampusId}
-                      onChange={(e) => setSelectedCampusId(e.target.value)}
-                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                    >
-                      {CAMPUSES.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {c.name}
-                        </option>
-                      ))}
-                    </select>
+                  <div className="space-y-1.5 relative">
+                    <Label>Select your org or college</Label>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        type="text"
+                        placeholder="Search organization or college..."
+                        value={searchQuery}
+                        onChange={(e) => {
+                          setSearchQuery(e.target.value);
+                          if (selectedOrg && e.target.value !== selectedOrg.name) {
+                            setSelectedOrg(null);
+                          }
+                        }}
+                        onFocus={() => setFocusedInput("signin")}
+                        onBlur={() => {
+                          setTimeout(() => setFocusedInput(null), 250);
+                        }}
+                        className="pl-9 pr-10"
+                      />
+                      {selectedOrg && (
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full bg-success/20 text-success">
+                          <Check className="h-3 w-3" />
+                        </span>
+                      )}
+                    </div>
+                    
+                    {focusedInput === "signin" && (
+                      <div className="absolute z-50 w-full mt-1 max-h-56 overflow-y-auto rounded-lg border border-border bg-popover text-popover-foreground shadow-xl p-1.5 space-y-1 animate-in fade-in slide-in-from-top-2 duration-200">
+                        {filteredOrgs.length === 0 ? (
+                          <div className="p-3 text-xs text-muted-foreground text-center">
+                            No matching organizations found.<br/>
+                            Try typing another name.
+                          </div>
+                        ) : (
+                          filteredOrgs.map((org) => {
+                            const isSelected = selectedOrg?.name === org.name;
+                            return (
+                              <button
+                                key={`si-${org.name}`}
+                                type="button"
+                                onClick={() => {
+                                  setSelectedOrg(org);
+                                  setSelectedCampusId(org.campusId);
+                                  setSearchQuery(org.name);
+                                  setFocusedInput(null);
+                                }}
+                                className={`w-full text-left px-3 py-2 text-xs rounded-md flex items-center justify-between transition-colors ${
+                                  isSelected 
+                                    ? "bg-primary text-primary-foreground font-semibold" 
+                                    : "hover:bg-muted text-foreground"
+                                }`}
+                              >
+                                <div>
+                                  <span className="block font-medium">{org.name}</span>
+                                  <span className={`block text-[10px] ${isSelected ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
+                                    @{org.domain}
+                                  </span>
+                                </div>
+                                {isSelected && <Check className="h-3 w-3" />}
+                              </button>
+                            );
+                          })
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
                 <div className="space-y-2">
@@ -242,20 +431,72 @@ export function AuthForm() {
             <TabsContent value="signup" className="mt-6">
               <form onSubmit={handleSignUp} className="space-y-4">
                 {isGenericHost && (
-                  <div className="space-y-1.5">
-                    <Label htmlFor="su-college">Select your College</Label>
-                    <select
-                      id="su-college"
-                      value={selectedCampusId}
-                      onChange={(e) => setSelectedCampusId(e.target.value)}
-                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                    >
-                      {CAMPUSES.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {c.name}
-                        </option>
-                      ))}
-                    </select>
+                  <div className="space-y-1.5 relative">
+                    <Label>Select your org or college</Label>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        type="text"
+                        placeholder="Search organization or college..."
+                        value={searchQuery}
+                        onChange={(e) => {
+                          setSearchQuery(e.target.value);
+                          if (selectedOrg && e.target.value !== selectedOrg.name) {
+                            setSelectedOrg(null);
+                          }
+                        }}
+                        onFocus={() => setFocusedInput("signup")}
+                        onBlur={() => {
+                          setTimeout(() => setFocusedInput(null), 250);
+                        }}
+                        className="pl-9 pr-10"
+                      />
+                      {selectedOrg && (
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full bg-success/20 text-success">
+                          <Check className="h-3 w-3" />
+                        </span>
+                      )}
+                    </div>
+                    
+                    {focusedInput === "signup" && (
+                      <div className="absolute z-50 w-full mt-1 max-h-56 overflow-y-auto rounded-lg border border-border bg-popover text-popover-foreground shadow-xl p-1.5 space-y-1 animate-in fade-in slide-in-from-top-2 duration-200">
+                        {filteredOrgs.length === 0 ? (
+                          <div className="p-3 text-xs text-muted-foreground text-center">
+                            No matching organizations found.<br/>
+                            Try typing another name.
+                          </div>
+                        ) : (
+                          filteredOrgs.map((org) => {
+                            const isSelected = selectedOrg?.name === org.name;
+                            return (
+                              <button
+                                key={`su-${org.name}`}
+                                type="button"
+                                onClick={() => {
+                                  setSelectedOrg(org);
+                                  setSelectedCampusId(org.campusId);
+                                  setSearchQuery(org.name);
+                                  setFocusedInput(null);
+                                }}
+                                className={`w-full text-left px-3 py-2 text-xs rounded-md flex items-center justify-between transition-colors ${
+                                  isSelected 
+                                    ? "bg-primary text-primary-foreground font-semibold" 
+                                    : "hover:bg-muted text-foreground"
+                                }`}
+                              >
+                                <div>
+                                  <span className="block font-medium">{org.name}</span>
+                                  <span className={`block text-[10px] ${isSelected ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
+                                    @{org.domain}
+                                  </span>
+                                </div>
+                                {isSelected && <Check className="h-3 w-3" />}
+                              </button>
+                            );
+                          })
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
                 <div className="space-y-2">
