@@ -288,7 +288,7 @@ export function AuthForm() {
         </div>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight">Sign in to CampusPool</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Only <span className="text-foreground">{allowedDomains.map((d) => `@${d}`).join(", ")}</span> emails can sign up.
+          Sign in or create an account using your verified organization or college email.
         </p>
 
         {signedUp ? (
@@ -516,7 +516,9 @@ export function AuthForm() {
                   {showDomainHint && (
                     <p className="text-xs text-destructive flex items-center gap-1 mt-1">
                       <ShieldCheck className="h-3 w-3" />
-                      Only {allowedDomains.map((d) => `@${d}`).join(", ")} emails are accepted
+                      {allowedDomains.length > 3
+                        ? "Email domain must match your selected organization"
+                        : `Only ${allowedDomains.map((d) => `@${d}`).join(", ")} emails are accepted`}
                     </p>
                   )}
                 </div>
