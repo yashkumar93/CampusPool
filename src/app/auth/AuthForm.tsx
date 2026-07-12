@@ -29,7 +29,9 @@ function getPasswordStrength(password: string): { level: number; label: string; 
 
 const ORGANIZATIONS: { name: string; campusId: string; domain: string }[] = [
   { name: "VIT Vellore", campusId: "vit", domain: "vit.ac.in" },
+  { name: "VIT Vellore (Student)", campusId: "vit", domain: "vitstudent.ac.in" },
   { name: "VIT-AP University", campusId: "vitap", domain: "vitap.ac.in" },
+  { name: "VIT-AP University (Student)", campusId: "vitap", domain: "vitapstudent.ac.in" },
   { name: "SRM Kattankulathur", campusId: "srm", domain: "srmist.edu.in" },
   { name: "SRM University AP", campusId: "other", domain: "srmap.edu.in" },
   { name: "Anna University", campusId: "other", domain: "annauniv.edu" },

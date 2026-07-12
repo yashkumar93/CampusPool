@@ -20,6 +20,7 @@ export const ALLOWED_EMAIL_DOMAINS = [
   "vit.ac.in",
   "vitstudent.ac.in",
   "vitap.ac.in",
+  "vitapstudent.ac.in",
   "srmist.edu.in",
   "srmap.edu.in",
   "annauniv.edu",
