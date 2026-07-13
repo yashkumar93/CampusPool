@@ -87,6 +87,15 @@ export function GroupDetail({ groupId }: { groupId: string }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const typingChannelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
   const lastTypingSentRef = useRef(0);
+  const completingRef = useRef(false);
+
+  useEffect(() => {
+    return () => {
+      if (watchIdRef.current != null && typeof navigator !== "undefined" && navigator.geolocation) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const channel = supabase
@@ -264,10 +273,10 @@ export function GroupDetail({ groupId }: { groupId: string }) {
         // Automatically complete the trip if the driver reaches the destination
         if (destination) {
           const dist = getDistance(loc, destination);
-          if (dist < 30) {
-            toast.success("Destination reached! Completing the group trip...");
-            completeMut.mutate();
+          if (dist < 30 && !completingRef.current && !isCompleted) {
+            completingRef.current = true;
             stopBroadcast();
+            completeMut.mutate();
           }
         }
       },
@@ -330,10 +339,10 @@ export function GroupDetail({ groupId }: { groupId: string }) {
           polyline={group.route_polyline ?? null}
           driver={isInProgress ? driverLoc : null}
           onDestinationReached={() => {
-            if (isDriver && !isCompleted) {
-              toast.success("Destination reached! Completing the group trip...");
-              completeMut.mutate();
+            if (isDriver && !isCompleted && !completingRef.current) {
+              completingRef.current = true;
               stopBroadcast();
+              completeMut.mutate();
             }
           }}
         />

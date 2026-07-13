@@ -100,15 +100,23 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
     enabled: !!data && isMine,
   });
 
+  const [respondingId, setRespondingId] = useState<string | null>(null);
   const respondMut = useMutation({
-    mutationFn: (v: { requestId: string; accept: boolean }) => respondJoinRequest(v),
+    mutationFn: (v: { requestId: string; accept: boolean }) => {
+      setRespondingId(v.requestId);
+      return respondJoinRequest(v);
+    },
     onSuccess: (res) => {
+      setRespondingId(null);
       toast.success(res.groupId ? "Passenger accepted" : "Request updated");
       qc.invalidateQueries({ queryKey: ["incoming-requests", rideId] });
       qc.invalidateQueries({ queryKey: ["my-groups"] });
       if (res.groupId) router.push(`/groups/${res.groupId}`);
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed"),
+    onError: (e) => {
+      setRespondingId(null);
+      toast.error(e instanceof Error ? e.message : "Failed");
+    },
   });
 
   const cancelMut = useMutation({
@@ -314,7 +322,7 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
                           size="sm"
                           className="gap-1"
                           onClick={() => respondMut.mutate({ requestId: r.id, accept: true })}
-                          disabled={respondMut.isPending}
+                          disabled={respondMut.isPending && respondingId === r.id}
                         >
                           <Check className="h-3.5 w-3.5" /> Accept
                         </Button>
@@ -323,7 +331,7 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
                           variant="outline"
                           className="gap-1"
                           onClick={() => respondMut.mutate({ requestId: r.id, accept: false })}
-                          disabled={respondMut.isPending}
+                          disabled={respondMut.isPending && respondingId === r.id}
                         >
                           <X className="h-3.5 w-3.5" /> Decline
                         </Button>

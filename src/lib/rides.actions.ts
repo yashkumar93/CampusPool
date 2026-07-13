@@ -235,6 +235,16 @@ export async function requestJoin(rawInput: unknown) {
   if (error || !target) throw new Error("Ride not found");
   if (target.creator_id === userId) throw new Error("Can't request your own ride");
 
+  const { data: existing } = await supabase
+    .from("join_requests")
+    .select("status")
+    .eq("target_ride_id", data.targetRideId)
+    .eq("requester_id", userId)
+    .maybeSingle();
+  if (existing?.status === "declined") {
+    throw new Error("This join request was declined by the driver");
+  }
+
   const { data: req, error: e2 } = await supabase
     .from("join_requests")
     .upsert(
@@ -272,15 +282,16 @@ export async function respondJoinRequest(rawInput: unknown) {
     .single();
   if (error || !req) throw new Error("Request not found");
 
-  const { data: target } = await supabase
+  const { data: target, error: tErr } = await supabase
     .from("rides")
     .select("*")
     .eq("id", req.target_ride_id)
     .single();
-  if (!target || target.creator_id !== userId) throw new Error("Not your ride");
+  if (tErr || !target || target.creator_id !== userId) throw new Error("Not your ride");
 
   if (!accept) {
-    await supabase.from("join_requests").update({ status: "declined" }).eq("id", req.id);
+    const { error: decErr } = await supabase.from("join_requests").update({ status: "declined" }).eq("id", req.id);
+    if (decErr) throw new Error(decErr.message);
     return { ok: true };
   }
 
@@ -302,23 +313,35 @@ export async function respondJoinRequest(rawInput: unknown) {
     if (eg || !group) throw new Error(eg?.message ?? "Failed to create group");
     groupId = group.id;
 
-    await supabase.from("ride_group_members").insert({
-      group_id: groupId,
-      user_id: target.creator_id,
-      ride_id: target.id,
-      role: target.role,
-      pickup_lat: target.pickup_lat,
-      pickup_lng: target.pickup_lng,
-      pickup_label: target.pickup_label,
-      dest_lat: target.dest_lat,
-      dest_lng: target.dest_lng,
-      dest_label: target.dest_label,
-      member_status: "accepted",
-    });
-    await supabase
+    const { data: creatorMember } = await supabase
+      .from("ride_group_members")
+      .select("id")
+      .eq("group_id", groupId)
+      .eq("user_id", target.creator_id)
+      .maybeSingle();
+    if (!creatorMember) {
+      const { error: insErr } = await supabase.from("ride_group_members").insert({
+        group_id: groupId,
+        user_id: target.creator_id,
+        ride_id: target.id,
+        role: target.role,
+        pickup_lat: target.pickup_lat,
+        pickup_lng: target.pickup_lng,
+        pickup_label: target.pickup_label,
+        dest_lat: target.dest_lat,
+        dest_lng: target.dest_lng,
+        dest_label: target.dest_label,
+        member_status: "accepted",
+      });
+      if (insErr && !insErr.message.includes("duplicate key")) throw new Error(insErr.message);
+    }
+
+    const { error: upErr } = await supabase
       .from("rides")
       .update({ group_id: groupId, status: "matched" })
       .eq("id", target.id);
+    if (upErr) throw new Error(upErr.message);
+
     if (target.estimated_cost) {
       await supabase
         .from("ride_groups")
@@ -327,25 +350,56 @@ export async function respondJoinRequest(rawInput: unknown) {
     }
   }
 
-  const pickupLat = req.pickup_lat ?? target.pickup_lat;
-  const pickupLng = req.pickup_lng ?? target.pickup_lng;
-  const destLat = req.dest_lat ?? target.dest_lat;
-  const destLng = req.dest_lng ?? target.dest_lng;
-  await supabase.from("ride_group_members").insert({
-    group_id: groupId!,
-    user_id: req.requester_id,
-    ride_id: req.requester_ride_id,
-    role: "passenger",
-    pickup_lat: pickupLat,
-    pickup_lng: pickupLng,
-    pickup_label: req.pickup_label ?? target.pickup_label,
-    dest_lat: destLat,
-    dest_lng: destLng,
-    dest_label: req.dest_label ?? target.dest_label,
-    member_status: "accepted",
-  });
+  let requesterRole: "passenger" | "driver" = "passenger";
+  if (req.requester_ride_id) {
+    const { data: reqRide } = await supabase
+      .from("rides")
+      .select("role")
+      .eq("id", req.requester_ride_id)
+      .maybeSingle();
+    if (reqRide?.role === "driver") requesterRole = "driver";
+  }
 
-  await supabase.from("join_requests").update({ status: "accepted" }).eq("id", req.id);
+  const { data: reqMember } = await supabase
+    .from("ride_group_members")
+    .select("id")
+    .eq("group_id", groupId!)
+    .eq("user_id", req.requester_id)
+    .maybeSingle();
+  if (!reqMember) {
+    const pickupLat = req.pickup_lat ?? target.pickup_lat;
+    const pickupLng = req.pickup_lng ?? target.pickup_lng;
+    const destLat = req.dest_lat ?? target.dest_lat;
+    const destLng = req.dest_lng ?? target.dest_lng;
+    const { error: rmErr } = await supabase.from("ride_group_members").insert({
+      group_id: groupId!,
+      user_id: req.requester_id,
+      ride_id: req.requester_ride_id,
+      role: requesterRole,
+      pickup_lat: pickupLat,
+      pickup_lng: pickupLng,
+      pickup_label: req.pickup_label ?? target.pickup_label,
+      dest_lat: destLat,
+      dest_lng: destLng,
+      dest_label: req.dest_label ?? target.dest_label,
+      member_status: "accepted",
+    });
+    if (rmErr && !rmErr.message.includes("duplicate key")) throw new Error(rmErr.message);
+  }
+
+  if (req.requester_ride_id) {
+    await supabase
+      .from("rides")
+      .update({ group_id: groupId!, status: "matched" })
+      .eq("id", req.requester_ride_id);
+  }
+
+  const { error: jrErr } = await supabase
+    .from("join_requests")
+    .update({ status: "accepted" })
+    .eq("id", req.id);
+  if (jrErr) throw new Error(jrErr.message);
+
   await recomputeGroupSharesInternal(supabase, groupId!);
   return { ok: true, groupId };
 }
@@ -360,12 +414,26 @@ export async function startTrip(rawInput: unknown) {
     .eq("id", groupId)
     .single();
   if (!g) throw new Error("Group not found");
-  if (g.driver_id && g.driver_id !== userId) throw new Error("Only the driver can start the trip");
 
-  await supabase
+  if (g.driver_id && g.driver_id !== userId) {
+    throw new Error("Only the assigned driver can start the trip");
+  }
+  if (!g.driver_id) {
+    const { data: membership } = await supabase
+      .from("ride_group_members")
+      .select("id")
+      .eq("group_id", g.id)
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (!membership) throw new Error("You are not a member of this group");
+    await supabase.from("ride_groups").update({ driver_id: userId }).eq("id", g.id);
+  }
+
+  const { error } = await supabase
     .from("ride_groups")
     .update({ status: "in_progress", started_at: new Date().toISOString() })
     .eq("id", groupId);
+  if (error) throw new Error(error.message);
   return { ok: true };
 }
 

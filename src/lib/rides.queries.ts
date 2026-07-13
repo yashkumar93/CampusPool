@@ -128,7 +128,7 @@ export async function findMatches({ rideId }: { rideId: string }) {
   }
 
   const departTs = new Date(mine.depart_at).getTime();
-  const windowMs = (mine.flex_minutes + 60) * 60_000;
+  const windowMs = ((mine.flex_minutes ?? 15) + 60) * 60_000;
   const lo = new Date(departTs - windowMs).toISOString();
   const hi = new Date(departTs + windowMs).toISOString();
 
@@ -327,4 +327,128 @@ export async function listCollegeClassmates() {
 
   if (error) throw new Error(error.message);
   return classmates ?? [];
+}
+
+export type MapRadarRide = {
+  id: string;
+  role: "passenger" | "driver";
+  pickup_label: string;
+  dest_label: string;
+  pickup_lat: number;
+  pickup_lng: number;
+  dest_lat: number;
+  dest_lng: number;
+  depart_at: string;
+  seats: number;
+  vehicle_type: string;
+  estimated_cost: number | null;
+  creator_id: string;
+  profile: {
+    id: string;
+    full_name: string | null;
+    department: string | null;
+    rating_avg: number | null;
+    rating_count: number | null;
+    avatar_url: string | null;
+    college: string | null;
+  } | null;
+};
+
+export type MapRadarTrip = {
+  group_id: string;
+  name: string | null;
+  status: string;
+  driver_id: string | null;
+  lat: number;
+  lng: number;
+  heading: number | null;
+  speed: number | null;
+  recorded_at: string;
+  pickup_label: string;
+  dest_label: string;
+  driver_profile: {
+    id: string;
+    full_name: string | null;
+    department: string | null;
+    rating_avg: number | null;
+  } | null;
+};
+
+export async function listMapRadarData(): Promise<{
+  rides: MapRadarRide[];
+  activeTrips: MapRadarTrip[];
+}> {
+  if (typeof window === "undefined") return { rides: [], activeTrips: [] };
+
+  const { userId } = await requireAuth();
+  const myProfile = await getMyProfile();
+  if (!myProfile || !myProfile.college) return { rides: [], activeTrips: [] };
+
+  const { data: profiles } = await supabase
+    .from("profiles_public")
+    .select("id, full_name, department, rating_avg, rating_count, avatar_url, college")
+    .eq("college", myProfile.college);
+
+  const classmateIds = (profiles ?? []).map((p) => p.id).filter(Boolean);
+  const profileMap = new Map((profiles ?? []).map((p) => [p.id, p]));
+
+  const now = new Date();
+  const hi = new Date(now.getTime() + 12 * 60 * 60_000).toISOString();
+  const lo = new Date(now.getTime() - 30 * 60_000).toISOString();
+
+  const { data: rawRides } = await supabase
+    .from("rides")
+    .select(
+      "id, role, pickup_label, dest_label, pickup_lat, pickup_lng, dest_lat, dest_lng, depart_at, seats, vehicle_type, estimated_cost, creator_id, status"
+    )
+    .eq("status", "open")
+    .in("creator_id", classmateIds)
+    .gte("depart_at", lo)
+    .lte("depart_at", hi)
+    .order("depart_at", { ascending: true })
+    .limit(100);
+
+  const rides: MapRadarRide[] = (rawRides ?? []).map((r) => ({
+    ...(r as any),
+    profile: profileMap.get(r.creator_id) ?? null,
+  }));
+
+  const { data: inProgressGroups } = await supabase
+    .from("ride_groups")
+    .select("id, name, status, driver_id, pickup_label, dest_label")
+    .eq("status", "in_progress")
+    .limit(50);
+
+  const activeTrips: MapRadarTrip[] = [];
+  if (inProgressGroups && inProgressGroups.length > 0) {
+    for (const g of inProgressGroups) {
+      if (!g.driver_id || !classmateIds.includes(g.driver_id)) continue;
+      const { data: loc } = await supabase
+        .from("trip_locations")
+        .select("lat, lng, heading, speed, recorded_at")
+        .eq("group_id", g.id)
+        .order("recorded_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (loc) {
+        activeTrips.push({
+          group_id: g.id,
+          name: g.name,
+          status: g.status,
+          driver_id: g.driver_id,
+          lat: loc.lat,
+          lng: loc.lng,
+          heading: loc.heading,
+          speed: loc.speed,
+          recorded_at: loc.recorded_at,
+          pickup_label: g.pickup_label,
+          dest_label: g.dest_label,
+          driver_profile: profileMap.get(g.driver_id) ?? null,
+        });
+      }
+    }
+  }
+
+  return { rides, activeTrips };
 }
