@@ -175,7 +175,7 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
     return () => { supabase.removeChannel(channel); };
   }, [data, rideId, qc]);
 
-  if (isLoading || !data) return <RideMatchesSkeleton />;
+  if (isLoading || !data || !data.mine) return <RideMatchesSkeleton />;
 
   const mine = data.mine;
   const isDriverOffer = mine.role === "driver";

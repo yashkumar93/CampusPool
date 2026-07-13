@@ -208,7 +208,7 @@ export function GroupDetail({ groupId }: { groupId: string }) {
     onError: (e) => toast.error(e instanceof Error ? e.message : "Failed"),
   });
 
-  if (isLoading || !data) return <div className="text-sm text-muted-foreground">Loading group…</div>;
+  if (isLoading || !data || !data.group) return <div className="text-sm text-muted-foreground">Loading group…</div>;
 
   const { group, messages, currentUserId, ratedUserIds } = data;
   const typingNames = Object.keys(typingUsers)
