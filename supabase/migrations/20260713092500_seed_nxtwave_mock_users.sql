@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA extensions;
+
 -- Seed NxtWave mock accounts
 DO $seed$
 DECLARE
@@ -20,7 +22,7 @@ BEGIN
       created_at, updated_at, confirmation_token, email_change, email_change_token_new, recovery_token
     ) VALUES (
       '00000000-0000-0000-0000-000000000000', new_id, 'authenticated', 'authenticated',
-      rec->>'e', crypt('Password123!', gen_salt('bf')),
+      rec->>'e', extensions.crypt('Password123!', extensions.gen_salt('bf')),
       now(), '{"provider":"email","providers":["email"]}'::jsonb,
       jsonb_build_object('full_name', rec->>'n', 'college', 'NxtWave'),
       now(), now(), '', '', '', ''
