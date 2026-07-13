@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSuspenseQuery, useQueryClient, queryOptions } from "@tanstack/react-query";
-import { listMyRides, listMyGroups, listLiveRides } from "@/lib/rides.queries";
+import { listMyRides, listMyGroups, listLiveRides, listCollegeClassmates, getMyProfile } from "@/lib/rides.queries";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -42,13 +42,7 @@ const quickActions = [
   { label: "Navigate", icon: Navigation, href: "#" },
 ] as const;
 
-/* ────────────── mock timetable ────────────── */
 
-const timetable = [
-  { start: "08:00", end: "08:50", course: "Software Engineering", code: "CSE3001", room: "AB1-404", slot: "A1" },
-  { start: "09:50", end: "10:40", course: "Database Systems", code: "CSE3002", room: "AR2-210", slot: "F1" },
-  { start: "11:40", end: "12:30", course: "Applied Statistics", code: "MAT3003", room: "AB1-302", slot: "B1" },
-];
 
 /* ────────────────────────────────────────────── */
 /*                  PAGE ROOT                     */
@@ -123,38 +117,13 @@ export default function HomePage() {
         ))}
       </section>
 
-      {/* ── 4. Two-Column: Timetable + Student Rides ── */}
+      {/* ── 4. Two-Column: Registered Classmates + Student Rides ── */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {/* left – Today's Timetable */}
+        {/* left – Registered Classmates */}
         <div>
-          <div className="flex items-center gap-2 mb-3">
-            <Clock className="h-4 w-4 text-muted-foreground" />
-            <h2 className="text-base font-bold">Today&apos;s Timetable</h2>
-            <span className="ml-1 rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
-              Coming soon
-            </span>
-          </div>
-          <div className="rounded-xl border border-border/40 bg-card p-5">
-            <ul>
-              {timetable.map((t, i) => (
-                <li
-                  key={t.code}
-                  className={`flex items-center gap-4 py-3 ${i < timetable.length - 1 ? "border-b border-border/20" : ""}`}
-                >
-                  <div className="flex flex-col items-end w-12 shrink-0">
-                    <span className="text-sm font-bold leading-tight">{t.start}</span>
-                    <span className="text-[10px] text-muted-foreground">{t.end}</span>
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-sm font-medium truncate">{t.course}</div>
-                    <div className="text-[11px] text-muted-foreground truncate">
-                      {t.code} · {t.room} · Slot {t.slot}
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <Suspense fallback={<ClassmatesSkeleton />}>
+            <ClassmatesSection />
+          </Suspense>
         </div>
 
         {/* right – Student Rides Near You */}
@@ -501,5 +470,76 @@ function MyGroups() {
         ))}
       </ul>
     </section>
+  );
+}
+
+function ClassmatesSkeleton() {
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-3">
+        <Users className="h-4 w-4 text-muted-foreground" />
+        <div className="h-5 w-36 rounded shimmer" />
+      </div>
+      <div className="rounded-xl border border-border/40 bg-card p-5 space-y-3">
+        <SkeletonCard />
+        <SkeletonCard />
+      </div>
+    </div>
+  );
+}
+
+function ClassmatesSection() {
+  const { data: profile } = useSuspenseQuery(
+    queryOptions({ queryKey: ["my-profile"], queryFn: () => getMyProfile() })
+  );
+  const { data: classmates } = useSuspenseQuery(
+    queryOptions({ queryKey: ["college-classmates"], queryFn: () => listCollegeClassmates() })
+  );
+
+  const collegeName = profile?.college || "your college";
+
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-3">
+        <Users className="h-4 w-4 text-[#ffe17c]" />
+        <h2 className="text-base font-bold truncate max-w-[280px]" title={`Classmates at ${collegeName}`}>
+          Classmates at {collegeName}
+        </h2>
+        <Badge variant="secondary" className="ml-1 font-normal">{classmates.length}</Badge>
+      </div>
+      <div className="rounded-xl border border-border/40 bg-card p-5 max-h-[340px] overflow-y-auto scrollbar-thin scrollbar-thumb-muted">
+        {classmates.length === 0 ? (
+          <div className="text-center py-8 text-xs text-muted-foreground">
+            No other students registered from your college yet.
+          </div>
+        ) : (
+          <ul className="divide-y divide-border/20">
+            {classmates.map((c) => {
+              const initials = (c.full_name ?? "Student").split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+              return (
+                <li key={c.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary/20 text-[#b7c6c2] text-xs font-bold border border-secondary/30">
+                    {initials}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm font-medium flex items-center gap-1.5">
+                      <span className="truncate text-white">{c.full_name}</span>
+                      {c.verified && (
+                        <span className="inline-flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#1DB954]/15 text-[#1DB954] text-[8px] font-bold">
+                          ✓
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-[11px] text-muted-foreground truncate">
+                      {c.department || "Student"}{c.year ? ` · ${c.year} Year` : ""}
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
+    </div>
   );
 }

@@ -22,6 +22,18 @@ export async function listLiveRides() {
     console.error("Failed to run close_expired_rides:", err);
   }
 
+  const myProfile = await getMyProfile();
+  if (!myProfile || !myProfile.college) return [];
+
+  // Fetch classmates' profiles (same college)
+  const { data: classmateProfiles } = await supabase
+    .from("profiles_public")
+    .select("id, full_name, department, rating_avg, rating_count, avatar_url")
+    .eq("college", myProfile.college);
+
+  const classmateIds = (classmateProfiles ?? []).map((p) => p.id).filter(Boolean);
+  if (!classmateIds.length) return [];
+
   const now = new Date();
   const hi = new Date(now.getTime() + 6 * 60 * 60_000).toISOString();
   const lo = new Date(now.getTime() - 15 * 60_000).toISOString();
@@ -33,21 +45,14 @@ export async function listLiveRides() {
     )
     .eq("status", "open")
     .neq("creator_id", userId)
+    .in("creator_id", classmateIds)
     .gte("depart_at", lo)
     .lte("depart_at", hi)
     .order("depart_at", { ascending: true })
     .limit(30);
   if (error) throw new Error(error.message);
 
-  const ids = Array.from(new Set((rides ?? []).map((r) => r.creator_id)));
-  const { data: profiles } = ids.length
-    ? await supabase
-        .from("profiles_public")
-        .select("id, full_name, department, rating_avg, rating_count, avatar_url")
-        .in("id", ids)
-    : { data: [] };
-
-  const map = new Map((profiles ?? []).map((p) => [p.id, p]));
+  const map = new Map((classmateProfiles ?? []).map((p) => [p.id, p]));
   return (rides ?? []).map((r) => ({ ...r, profile: map.get(r.creator_id) ?? null }));
 }
 
@@ -281,4 +286,22 @@ export async function listMyGroups() {
     .in("id", ids)
     .order("depart_at", { ascending: false });
   return groups ?? [];
+}
+
+export async function listCollegeClassmates() {
+  if (typeof window === "undefined") return [];
+
+  const profile = await getMyProfile();
+  if (!profile || !profile.college) return [];
+
+  const { data: classmates, error } = await supabase
+    .from("profiles_public")
+    .select("id, full_name, department, year, rating_avg, rating_count, avatar_url, college, verified")
+    .eq("college", profile.college)
+    .neq("id", profile.id)
+    .order("full_name", { ascending: true })
+    .limit(50);
+
+  if (error) throw new Error(error.message);
+  return classmates ?? [];
 }
