@@ -8,10 +8,14 @@ import { Badge } from "@/components/ui/badge";
 import {
   MapPin, ArrowRight, Clock, Plus, Users, MessageCircle,
   Car, UserRound, Radio, LocateFixed, ShieldAlert, Star,
+  CirclePlus, Search, GitCompare, Navigation, IndianRupee,
+  Leaf, Route, Sparkles,
 } from "lucide-react";
 import { Suspense, useEffect, useState } from "react";
 import { useGeolocation } from "@/hooks/useGeolocation";
 import { supabase } from "@/integrations/supabase/client";
+
+/* ────────────── helpers (unchanged) ────────────── */
 
 function formatTime(iso: string) {
   const d = new Date(iso);
@@ -29,66 +33,154 @@ function relTime(iso: string) {
   return m ? `in ${h}h ${m}m` : `in ${h}h`;
 }
 
+/* ────────────── quick-action data ────────────── */
+
+const quickActions = [
+  { label: "Offer Ride", icon: CirclePlus, href: "/rides/new?role=driver" },
+  { label: "Find Ride", icon: Search, href: "/rides/new?role=passenger" },
+  { label: "Compare", icon: GitCompare, href: "#" },
+  { label: "Navigate", icon: Navigation, href: "#" },
+] as const;
+
+/* ────────────── mock timetable ────────────── */
+
+const timetable = [
+  { start: "08:00", end: "08:50", course: "Software Engineering", code: "CSE3001", room: "AB1-404", slot: "A1" },
+  { start: "09:50", end: "10:40", course: "Database Systems", code: "CSE3002", room: "AR2-210", slot: "F1" },
+  { start: "11:40", end: "12:30", course: "Applied Statistics", code: "MAT3003", room: "AB1-302", slot: "B1" },
+];
+
+/* ────────────────────────────────────────────── */
+/*                  PAGE ROOT                     */
+/* ────────────────────────────────────────────── */
+
 export default function HomePage() {
   const geo = useGeolocation();
+
   return (
-    <div className="space-y-8 animate-fade-in-up">
-      <section className="surface-card overflow-hidden p-0 relative">
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#4f772d]/10 via-transparent to-[#ecf39e]/5" />
-        <div className="relative isolate flex flex-col gap-5 p-6 sm:p-7">
-          <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/15 blur-3xl" />
-          <div>
-            <div className="text-[10px] uppercase tracking-[0.25em] text-primary font-semibold">NxtPool</div>
-            <h1 className="mt-1.5 text-3xl font-bold tracking-tight sm:text-4xl leading-[1.1]">
-              Where to <span className="italic">today</span>?
-            </h1>
-            <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
-              Get a seat with a verified classmate in seconds.
-            </p>
+    <div className="space-y-6 animate-fade-in-up">
+      {/* ── 1. Greeting + Quick Actions ── */}
+      <section className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        {/* left */}
+        <div>
+          <h1 className="text-2xl font-bold">Hey there 👋</h1>
+          <div className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
+            <MapPin className="h-3.5 w-3.5" />
+            Your Campus
           </div>
-          <GeoBanner geo={geo} />
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Link href={{ pathname: "/rides/new", query: { role: "passenger" } }} className="group">
-              <div className="relative flex items-center gap-4 rounded-xl border border-border bg-background/60 p-4 transition-all duration-200 hover:border-primary/50 hover:bg-background/80 hover:scale-[1.01] hover:shadow-lg hover:shadow-primary/5">
-                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <UserRound className="h-5 w-5" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm font-semibold">Book a ride</div>
-                  <p className="text-xs text-muted-foreground">Find a driver going your way</p>
-                </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
+        </div>
+
+        {/* right – quick actions */}
+        <div className="flex items-center gap-3">
+          {quickActions.map((a) => (
+            <Link key={a.label} href={a.href} className="group flex flex-col items-center gap-1.5">
+              <div className="flex h-16 w-16 items-center justify-center rounded-xl border border-border/40 bg-card transition hover:border-primary/30">
+                <a.icon className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
               </div>
+              <span className="text-[10px] text-muted-foreground">{a.label}</span>
             </Link>
-            <Link href={{ pathname: "/rides/new", query: { role: "driver" } }} className="group">
-              <div className="relative flex items-center gap-4 rounded-xl border border-border bg-background/60 p-4 transition-all duration-200 hover:border-primary/50 hover:bg-background/80 hover:scale-[1.01] hover:shadow-lg hover:shadow-primary/5">
-                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-secondary text-foreground">
-                  <Car className="h-5 w-5" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm font-semibold">Offer a ride</div>
-                  <p className="text-xs text-muted-foreground">Fill empty seats, split fuel</p>
-                </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
-              </div>
+          ))}
+        </div>
+      </section>
+
+      {/* optional geo banner (preserved) */}
+      <GeoBanner geo={geo} />
+
+      {/* ── 2. AI Smart Recommendation Banner ── */}
+      <section className="rounded-xl border-l-4 border-[#1DB954] bg-[#1DB954]/8 p-5">
+        <div className="flex items-center gap-1.5 mb-2">
+          <Sparkles className="h-3.5 w-3.5 text-[#1DB954]" />
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-[#1DB954]">
+            AI Smart Recommendation
+          </span>
+        </div>
+        <p className="text-sm text-foreground/80 leading-relaxed">
+          Find matches heading your direction. AI-powered suggestions available when you post a ride.
+        </p>
+        <div className="mt-3 flex items-center gap-2">
+          <Button size="sm" className="h-7 rounded-lg bg-[#1DB954] text-white hover:bg-[#1DB954]/90 text-xs px-3">
+            View matches
+          </Button>
+          <Button size="sm" variant="outline" className="h-7 rounded-lg text-xs px-3 border-[#1DB954]/40 text-[#1DB954] hover:bg-[#1DB954]/10">
+            Compare all options
+          </Button>
+        </div>
+      </section>
+
+      {/* ── 3. Stats Cards Row ── */}
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { icon: IndianRupee, value: "₹0", label: "Money saved" },
+          { icon: Leaf, value: "0 kg", label: "Carbon saved" },
+          { icon: Car, value: "0", label: "Trips this month" },
+          { icon: Route, value: "--", label: "Favorite route" },
+        ].map((s) => (
+          <div key={s.label} className="rounded-xl border border-border/40 bg-card p-5">
+            <s.icon className="h-5 w-5 text-muted-foreground mb-3" />
+            <div className="text-2xl font-bold">{s.value}</div>
+            <div className="text-xs text-muted-foreground mt-0.5">{s.label}</div>
+          </div>
+        ))}
+      </section>
+
+      {/* ── 4. Two-Column: Timetable + Student Rides ── */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {/* left – Today's Timetable */}
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <Clock className="h-4 w-4 text-muted-foreground" />
+            <h2 className="text-base font-bold">Today&apos;s Timetable</h2>
+            <span className="ml-1 rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
+              Coming soon
+            </span>
+          </div>
+          <div className="rounded-xl border border-border/40 bg-card p-5">
+            <ul>
+              {timetable.map((t, i) => (
+                <li
+                  key={t.code}
+                  className={`flex items-center gap-4 py-3 ${i < timetable.length - 1 ? "border-b border-border/20" : ""}`}
+                >
+                  <div className="flex flex-col items-end w-12 shrink-0">
+                    <span className="text-sm font-bold leading-tight">{t.start}</span>
+                    <span className="text-[10px] text-muted-foreground">{t.end}</span>
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-sm font-medium truncate">{t.course}</div>
+                    <div className="text-[11px] text-muted-foreground truncate">
+                      {t.code} · {t.room} · Slot {t.slot}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* right – Student Rides Near You */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-base font-bold">Student Rides Near You</h2>
+            <Link href="/rides" className="text-xs text-primary hover:underline">
+              View all →
             </Link>
+          </div>
+          <div className="rounded-xl border border-border/40 bg-card">
+            <Suspense fallback={<LiveRidesSkeleton />}>
+              <LiveRides />
+            </Suspense>
           </div>
         </div>
       </section>
 
-      <div className="animate-fade-in-up" style={{ animationDelay: '150ms' }}>
-        <Suspense fallback={<LiveRidesSkeleton />}>
-          <LiveRides />
-        </Suspense>
-      </div>
-
-      <div className="animate-fade-in-up" style={{ animationDelay: '300ms' }}>
+      {/* ── 5. Your Rides + Your Groups ── */}
+      <div className="animate-fade-in-up" style={{ animationDelay: "150ms" }}>
         <Suspense fallback={<RidesSkeleton />}>
           <MyRides />
         </Suspense>
       </div>
 
-      <div className="animate-fade-in-up" style={{ animationDelay: '450ms' }}>
+      <div className="animate-fade-in-up" style={{ animationDelay: "300ms" }}>
         <Suspense fallback={<GroupsSkeleton />}>
           <MyGroups />
         </Suspense>
@@ -97,12 +189,16 @@ export default function HomePage() {
   );
 }
 
+/* ────────────────────────────────────────────── */
+/*              SUB-COMPONENTS                    */
+/* ────────────────────────────────────────────── */
+
 function GeoBanner({ geo }: { geo: ReturnType<typeof useGeolocation> }) {
   if (geo.status === "granted") {
     return (
       <div className="flex items-center gap-2 rounded-lg border border-success/30 bg-success/10 px-3 py-2 text-xs text-success-foreground">
         <LocateFixed className="h-3.5 w-3.5 text-success" />
-        Location on — we'll suggest nearby pickups.
+        Location on — we&apos;ll suggest nearby pickups.
       </div>
     );
   }
@@ -120,9 +216,11 @@ function GeoBanner({ geo }: { geo: ReturnType<typeof useGeolocation> }) {
   return null;
 }
 
+/* ── Skeletons ── */
+
 function SkeletonCard({ className = "" }: { className?: string }) {
   return (
-    <div className={`surface-card p-4 ${className}`}>
+    <div className={`rounded-xl border border-border/40 bg-card p-4 ${className}`}>
       <div className="flex items-center gap-2 mb-3">
         <div className="h-5 w-16 rounded shimmer" />
         <div className="h-5 w-12 rounded shimmer" />
@@ -140,23 +238,16 @@ function SkeletonCard({ className = "" }: { className?: string }) {
 
 function LiveRidesSkeleton() {
   return (
-    <section>
-      <div className="flex items-center gap-2">
-        <Radio className="h-4 w-4 text-primary animate-pulse" />
-        <h2 className="text-lg font-semibold">Rides happening now</h2>
-      </div>
-      <div className="mt-3 grid gap-2 sm:grid-cols-2">
-        <SkeletonCard />
-        <SkeletonCard />
-      </div>
-    </section>
+    <div className="p-5 space-y-3">
+      <SkeletonCard />
+      <SkeletonCard />
+    </div>
   );
 }
 
-// Fixed spelling/export to match Suspense fallback call
 function RidesSkeleton() {
   return (
-    <section>
+    <section className="rounded-xl border border-border/40 bg-card p-5">
       <div className="flex items-center justify-between">
         <div className="h-6 w-28 rounded shimmer" />
         <div className="h-8 w-16 rounded shimmer" />
@@ -171,7 +262,7 @@ function RidesSkeleton() {
 
 function GroupsSkeleton() {
   return (
-    <section>
+    <section className="rounded-xl border border-border/40 bg-card p-5">
       <div className="h-6 w-36 rounded shimmer" />
       <div className="mt-3 space-y-2">
         <SkeletonCard />
@@ -179,6 +270,8 @@ function GroupsSkeleton() {
     </section>
   );
 }
+
+/* ── Live Rides (data-fetching preserved, new card layout) ── */
 
 function LiveRides() {
   const qc = useQueryClient();
@@ -197,82 +290,75 @@ function LiveRides() {
     return () => { supabase.removeChannel(channel); };
   }, [qc]);
 
-  return (
-    <section>
-      <div className="flex items-center gap-2">
-        <span className="relative flex h-2 w-2">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-          <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
-        </span>
-        <h2 className="text-lg font-semibold">Rides happening now</h2>
-        <Badge variant="secondary" className="ml-1 font-normal">{rides.length}</Badge>
-      </div>
-      {rides.length === 0 ? (
-        <div className="surface-card mt-3 flex flex-col items-center p-8 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-3">
-            <Car className="h-6 w-6 text-primary" />
-          </div>
-          <div className="text-sm font-medium">No live rides right now</div>
-          <p className="mt-1 text-xs text-muted-foreground">Post one and be first — matches ping instantly.</p>
-          <Link href="/rides/new" className="mt-3">
-            <Button size="sm" className="gap-1.5">
-              <Plus className="h-3.5 w-3.5" /> Post a ride
-            </Button>
-          </Link>
+  if (rides.length === 0) {
+    return (
+      <div className="flex flex-col items-center p-8 text-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-3">
+          <Car className="h-6 w-6 text-primary" />
         </div>
-      ) : (
-        <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-          {rides.map((r) => (
-            <li key={r.id}>
-              <Link
-                href={`/rides/${r.id}`}
-                className="surface-card group block h-full p-4 transition-all duration-200 hover:border-primary/50 hover:scale-[1.01] hover:shadow-lg hover:shadow-primary/5"
-              >
-                <div className="flex items-center gap-2 text-xs">
-                  <Badge className="bg-primary/15 text-primary hover:bg-primary/15 gap-1">
-                    {r.role === "driver" ? <Car className="h-3 w-3" /> : <UserRound className="h-3 w-3" />}
-                    {r.role === "driver" ? "Driver" : "Passenger"}
-                  </Badge>
-                  <span className="ml-auto inline-flex items-center gap-1 text-muted-foreground" title={formatTime(r.depart_at)}>
-                    <Clock className="h-3 w-3" /> {relTime(r.depart_at)}
-                  </span>
-                </div>
-                <div className="mt-2 flex items-start gap-2 text-sm">
-                  <div className="mt-0.5 flex flex-col items-center gap-0.5">
-                    <span className="h-2 w-2 rounded-full bg-primary" />
-                    <span className="h-4 w-px bg-border" />
-                    <span className="h-2 w-2 rounded-sm border border-muted-foreground" />
-                  </div>
-                  <div className="min-w-0 flex-1 space-y-1">
-                    <div className="truncate">{r.pickup_label}</div>
-                    <div className="truncate text-muted-foreground">{r.dest_label}</div>
-                  </div>
-                </div>
-                <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
-                  <span className="truncate">
-                    {r.profile?.full_name ?? "Student"}
-                    {r.profile?.department ? ` · ${r.profile.department}` : ""}
-                  </span>
-                  <span className="inline-flex items-center gap-2">
-                    {r.profile && (r.profile.rating_count ?? 0) > 0 && (
-                      <span className="inline-flex items-center gap-0.5">
-                        <Star className="h-3 w-3 fill-primary text-primary" />
-                        {Number(r.profile.rating_avg).toFixed(1)}
-                      </span>
-                    )}
-                    <span className="inline-flex items-center gap-1">
-                      <Users className="h-3 w-3" /> {r.seats}
+        <div className="text-sm font-medium">No live rides right now</div>
+        <p className="mt-1 text-xs text-muted-foreground">Post one and be first — matches ping instantly.</p>
+        <Link href="/rides/new" className="mt-3">
+          <Button size="sm" className="gap-1.5">
+            <Plus className="h-3.5 w-3.5" /> Post a ride
+          </Button>
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <ul className="divide-y divide-border/20">
+      {rides.map((r) => {
+        const name = r.profile?.full_name ?? "Student";
+        const initials = name.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase();
+
+        return (
+          <li key={r.id}>
+            <Link
+              href={`/rides/${r.id}`}
+              className="flex items-center gap-3 px-5 py-4 transition hover:bg-muted/30"
+            >
+              {/* avatar */}
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/20 text-primary text-xs font-bold">
+                {initials}
+              </div>
+
+              {/* middle */}
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5 text-sm font-medium">
+                  <span className="truncate">{name}</span>
+                  {r.profile && (r.profile.rating_count ?? 0) > 0 && (
+                    <span className="inline-flex items-center gap-0.5 text-xs text-muted-foreground">
+                      <Star className="h-3 w-3 fill-primary text-primary" />
+                      {Number(r.profile.rating_avg).toFixed(1)}
                     </span>
-                  </span>
+                  )}
                 </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
+                <div className="text-xs text-muted-foreground truncate">
+                  {r.pickup_label} → {r.dest_label}
+                </div>
+              </div>
+
+              {/* right */}
+              <div className="text-right shrink-0">
+                <div className="text-sm font-bold text-primary">
+                  {r.role === "driver" ? "Driver" : "Rider"}
+                </div>
+                <div className="text-[10px] text-muted-foreground">
+                  <Clock className="inline h-2.5 w-2.5 mr-0.5" />
+                  {relTime(r.depart_at)}
+                </div>
+              </div>
+            </Link>
+          </li>
+        );
+      })}
+    </ul>
   );
 }
+
+/* ── My Rides (wrapped in themed card) ── */
 
 function MyRides() {
   const { data: rides } = useSuspenseQuery(
@@ -280,7 +366,7 @@ function MyRides() {
   );
 
   return (
-    <section>
+    <section className="rounded-xl border border-border/40 bg-card p-5">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">Your rides</h2>
         <Link href="/rides/new">
@@ -290,7 +376,7 @@ function MyRides() {
         </Link>
       </div>
       {rides.length === 0 ? (
-        <div className="surface-card mt-3 flex flex-col items-center p-8 text-center">
+        <div className="mt-3 flex flex-col items-center p-8 text-center">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted mb-3">
             <MapPin className="h-6 w-6 text-muted-foreground" />
           </div>
@@ -308,7 +394,7 @@ function MyRides() {
             <li key={r.id}>
               <Link
                 href={`/rides/${r.id}`}
-                className="surface-card block p-4 transition-all duration-200 hover:border-primary/50 hover:scale-[1.005] hover:shadow-md hover:shadow-primary/5"
+                className="block rounded-lg border border-border/30 p-4 transition-all duration-200 hover:border-primary/50 hover:bg-muted/20"
               >
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Badge variant="secondary" className="font-normal">
@@ -333,6 +419,8 @@ function MyRides() {
     </section>
   );
 }
+
+/* ── My Groups (wrapped in themed card) ── */
 
 function MyGroups() {
   const { data: groups } = useSuspenseQuery(
@@ -377,8 +465,9 @@ function MyGroups() {
   }
 
   if (!groups.length) return null;
+
   return (
-    <section>
+    <section className="rounded-xl border border-border/40 bg-card p-5">
       <h2 className="text-lg font-semibold">Your ride groups</h2>
       <ul className="mt-3 space-y-2">
         {groups.map((g) => (
@@ -386,7 +475,7 @@ function MyGroups() {
             <Link
               href={`/groups/${g.id}`}
               onClick={() => clearUnread(g.id)}
-              className="surface-card block p-4 transition-all duration-200 hover:border-primary/50 hover:scale-[1.005] hover:shadow-md hover:shadow-primary/5"
+              className="block rounded-lg border border-border/30 p-4 transition-all duration-200 hover:border-primary/50 hover:bg-muted/20"
             >
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <Users className="h-3.5 w-3.5" />

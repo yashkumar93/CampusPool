@@ -1,6 +1,7 @@
 import { createClient } from "@/integrations/supabase/server";
 import { redirect } from "next/navigation";
-import { AppHeader } from "@/components/AppHeader";
+import { AppSidebar } from "@/components/AppSidebar";
+import { DashboardTopBar } from "@/components/DashboardTopBar";
 
 export default async function AuthenticatedLayout({
   children,
@@ -17,9 +18,12 @@ export default async function AuthenticatedLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground dark">
-      <AppHeader />
-      <main className="mx-auto max-w-5xl px-5 py-6">{children}</main>
+    <div className="flex min-h-screen bg-background text-foreground dark">
+      <AppSidebar />
+      <div className="flex-1 flex flex-col ml-60">
+        <DashboardTopBar />
+        <main className="flex-1 px-6 py-6 overflow-y-auto">{children}</main>
+      </div>
     </div>
   );
 }
