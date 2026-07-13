@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Figtree } from "next/font/google";
+// @ts-ignore
 import "../styles.css";
 import { Providers } from "./providers";
 
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
   description: "NxtPool connects verified university students traveling the same way at similar times. Share rides, split cost, travel with classmates you can trust.",
   authors: [{ name: "NxtPool" }],
   openGraph: {
-    title: "NxtPool — Verified student ride sharing",
+    title: "NxtPool",
     description: "NxtPool connects verified university students traveling the same way at similar times. Share rides, split cost, travel with classmates you can trust.",
     type: "website",
     images: [
