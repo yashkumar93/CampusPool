@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { requestJoin, respondJoinRequest, cancelRide, closeRide } from "@/lib/rides.actions";
-import { findMatches, listIncomingRequests } from "@/lib/rides.queries";
+import { findMatches, listIncomingRequests, getMyProfile } from "@/lib/rides.queries";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, ArrowRight, ArrowLeft, Star, Users, Clock, Sparkles, Inbox, Check, X, Navigation2, Car, RefreshCw } from "lucide-react";
@@ -87,7 +87,13 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
     onError: (e) => toast.error(e instanceof Error ? e.message : "Failed to request"),
   });
 
-  const isMine = !!data && data.mine.creator_id === data.mine.creator_id;
+  const { data: profile } = useQuery({
+    queryKey: ["my-profile"],
+    queryFn: getMyProfile,
+  });
+  const currentUserId = profile?.id;
+
+  const isMine = !!data && !!currentUserId && data.mine.creator_id === currentUserId;
   const { data: incoming } = useQuery({
     queryKey: ["incoming-requests", rideId],
     queryFn: () => listIncomingRequests({ rideId }),
@@ -253,7 +259,7 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
         </div>
 
         {/* Ride management actions */}
-        {(mine.status === "open" || mine.status === "matched") && (
+        {isMine && (mine.status === "open" || mine.status === "matched") && (
           <div className="flex gap-2 mb-4">
             <Button
               variant="outline"
@@ -330,71 +336,159 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
           </section>
         )}
 
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-primary" /> {data.matches.length} nearby {data.matches.length === 1 ? "match" : "matches"}
-          </h2>
-        </div>
+        {!isMine ? (
+          <section className="mt-6">
+            <h2 className="text-lg font-bold text-white mb-3">Host Information</h2>
+            <div className="bg-[#1a221b] border-2 border-border/40 rounded-xl p-5 space-y-4">
+              {(mine as any).creator_profile ? (
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-secondary/20 text-[#b7c6c2] text-sm font-bold border border-secondary/30">
+                    {((mine as any).creator_profile.full_name ?? "Student").split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase()}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-base font-bold flex items-center gap-1.5 text-white">
+                      <span>{(mine as any).creator_profile.full_name}</span>
+                      {(mine as any).creator_profile.verified && (
+                        <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#1DB954]/15 text-[#1DB954] text-[10px] font-bold">
+                          ✓
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-xs text-muted-foreground truncate">
+                      {(mine as any).creator_profile.department || "Student"}{(mine as any).creator_profile.year ? ` · ${(mine as any).creator_profile.year} Year` : ""}
+                    </div>
+                  </div>
+                  {((mine as any).creator_profile.rating_count ?? 0) > 0 && (
+                    <div className="flex items-center gap-1 bg-white/5 border border-white/10 px-2 py-1 rounded text-xs font-bold text-[#ffe17c]">
+                      <Star className="h-3.5 w-3.5 fill-[#ffe17c]" /> {Number((mine as any).creator_profile.rating_avg).toFixed(1)}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-xs text-muted-foreground">Host profile details loading...</div>
+              )}
 
-        {data.matches.length === 0 ? (
-          <div className="surface-card flex flex-col items-center p-8 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-3">
-              <Sparkles className="h-6 w-6 text-primary" />
+              <div className="border-t border-border/20 pt-4 flex flex-col gap-3">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-muted-foreground font-bold">ESTIMATED COST SPLIT</span>
+                  <span className="font-bold text-white text-sm">
+                    {mine.estimated_cost ? `₹${mine.estimated_cost}` : "Auto Split"}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-muted-foreground font-bold">VEHICLE TYPE</span>
+                  <span className="font-bold text-white capitalize">{mine.vehicle_type}</span>
+                </div>
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-muted-foreground font-bold">AVAILABLE SEATS</span>
+                  <span className="font-bold text-[#ffe17c]">{mine.seats} seats</span>
+                </div>
+              </div>
+
+              <div className="pt-2">
+                {(mine as any).my_request ? (
+                  <div className="text-center">
+                    {(mine as any).my_request.status === "pending" && (
+                      <Button className="w-full h-11 btn-neo-secondary font-bold" disabled>
+                        Request Pending Approval
+                      </Button>
+                    )}
+                    {(mine as any).my_request.status === "accepted" && (
+                      <Button 
+                        className="w-full h-11 btn-neo-primary font-bold" 
+                        onClick={() => router.push(`/groups/${(mine as any).my_request.group_id}`)}
+                      >
+                        Request Accepted! Open Group Chat
+                      </Button>
+                    )}
+                    {(mine as any).my_request.status === "declined" && (
+                      <Button className="w-full h-11 bg-red-900/30 border border-red-500/20 text-red-400 font-bold" disabled>
+                        Request Declined
+                      </Button>
+                    )}
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => requestMut.mutate(mine.id)}
+                    disabled={requestMut.isPending}
+                    className="w-full h-11 btn-neo-primary font-bold flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    {requestMut.isPending ? "Sending Request..." : isDriverOffer ? "Request to Join Ride" : "Offer to Team Up"}
+                  </button>
+                )}
+              </div>
             </div>
-            <div className="text-sm font-medium">No compatible riders yet</div>
-            <p className="mt-2 text-xs text-muted-foreground max-w-xs">
-              Try widening your flex window or check back — we'll match you as new rides come in.
-            </p>
-          </div>
+          </section>
         ) : (
-          <ul className="space-y-3">
-            {data.matches.map((m) => {
-              const quality = matchQuality(m.score);
-              return (
-                <li key={m.ride.id} className="surface-card p-4 transition hover:border-primary/40 hover:shadow-md">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
-                        <Badge className="bg-primary/15 text-primary hover:bg-primary/15">{m.score}% match</Badge>
-                        <Badge className={quality.className}>{quality.label}</Badge>
-                        <Badge variant="secondary" className="font-normal">
-                          {m.ride.role === "driver" ? "Driver" : "Passenger"}
-                        </Badge>
-                        <span className="ml-1">±{Math.round(m.timeDiffMin)}m · pickup {m.pickupKm.toFixed(1)}km</span>
-                      </div>
-                      <div className="mt-2 flex items-center gap-2 text-sm">
-                        <MapPin className="h-4 w-4 text-primary" />
-                        <span className="truncate">{m.ride.pickup_label}</span>
-                        <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" />
-                        <span className="truncate">{m.ride.dest_label}</span>
-                      </div>
-                      <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
-                        <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" /> {fmt(m.ride.depart_at)}</span>
-                        {m.profile && (
-                          <span className="inline-flex items-center gap-1">
-                            <span className="font-medium text-foreground">{m.profile.full_name}</span>
-                            {m.profile.department && <span>· {m.profile.department}</span>}
-                            {(m.profile.rating_count ?? 0) > 0 && (
-                              <span className="inline-flex items-center gap-0.5">
-                                · <Star className="h-3 w-3 fill-primary text-primary" /> {Number(m.profile.rating_avg).toFixed(1)}
+          <>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-primary" /> {data.matches.length} nearby {data.matches.length === 1 ? "match" : "matches"}
+              </h2>
+            </div>
+
+            {data.matches.length === 0 ? (
+              <div className="surface-card flex flex-col items-center p-8 text-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-3">
+                  <Sparkles className="h-6 w-6 text-primary" />
+                </div>
+                <div className="text-sm font-medium">No compatible riders yet</div>
+                <p className="mt-2 text-xs text-muted-foreground max-w-xs">
+                  Try widening your flex window or check back — we'll match you as new rides come in.
+                </p>
+              </div>
+            ) : (
+              <ul className="space-y-3">
+                {data.matches.map((m) => {
+                  const quality = matchQuality(m.score);
+                  return (
+                    <li key={m.ride.id} className="surface-card p-4 transition hover:border-primary/40 hover:shadow-md">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
+                            <Badge className="bg-primary/15 text-primary hover:bg-primary/15">{m.score}% match</Badge>
+                            <Badge className={quality.className}>{quality.label}</Badge>
+                            <Badge variant="secondary" className="font-normal">
+                              {m.ride.role === "driver" ? "Driver" : "Passenger"}
+                            </Badge>
+                            <span className="ml-1">±{Math.round(m.timeDiffMin)}m · pickup {m.pickupKm.toFixed(1)}km</span>
+                          </div>
+                          <div className="mt-2 flex items-center gap-2 text-sm">
+                            <MapPin className="h-4 w-4 text-primary" />
+                            <span className="truncate">{m.ride.pickup_label}</span>
+                            <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" />
+                            <span className="truncate">{m.ride.dest_label}</span>
+                          </div>
+                          <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
+                            <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" /> {fmt(m.ride.depart_at)}</span>
+                            {m.profile && (
+                              <span className="inline-flex items-center gap-1">
+                                <span className="font-medium text-foreground">{m.profile.full_name}</span>
+                                {m.profile.department && <span>· {m.profile.department}</span>}
+                                {(m.profile.rating_count ?? 0) > 0 && (
+                                  <span className="inline-flex items-center gap-0.5">
+                                    · <Star className="h-3 w-3 fill-primary text-primary" /> {Number(m.profile.rating_avg).toFixed(1)}
+                                  </span>
+                                )}
                               </span>
                             )}
-                          </span>
-                        )}
+                          </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          onClick={() => requestMut.mutate(m.ride.id)}
+                          disabled={requestMut.isPending}
+                        >
+                          {m.ride.role === "driver" ? "Request seat" : "Ask to team up"}
+                        </Button>
                       </div>
-                    </div>
-                    <Button
-                      size="sm"
-                      onClick={() => requestMut.mutate(m.ride.id)}
-                      disabled={requestMut.isPending}
-                    >
-                      {m.ride.role === "driver" ? "Request seat" : "Ask to team up"}
-                    </Button>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </>
         )}
       </div>
 

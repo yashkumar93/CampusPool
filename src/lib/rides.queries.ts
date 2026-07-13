@@ -102,7 +102,30 @@ export async function findMatches({ rideId }: { rideId: string }) {
     .eq("id", rideId)
     .single();
   if (e1 || !mine) throw new Error(e1?.message ?? "Ride not found");
-  if (mine.creator_id !== userId) throw new Error("Not your ride");
+  
+  if (mine.creator_id !== userId) {
+    const { data: creatorProfile } = await supabase
+      .from("profiles_public")
+      .select("id, full_name, department, year, rating_avg, rating_count, avatar_url")
+      .eq("id", mine.creator_id)
+      .maybeSingle();
+
+    const { data: myRequest } = await supabase
+      .from("join_requests")
+      .select("*")
+      .eq("target_ride_id", rideId)
+      .eq("requester_id", userId)
+      .maybeSingle();
+
+    return {
+      mine: {
+        ...mine,
+        creator_profile: creatorProfile ?? null,
+        my_request: myRequest ?? null,
+      },
+      matches: [],
+    };
+  }
 
   const departTs = new Date(mine.depart_at).getTime();
   const windowMs = (mine.flex_minutes + 60) * 60_000;
