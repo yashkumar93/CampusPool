@@ -7,6 +7,7 @@ const pageTitles: Record<string, string> = {
   "/home": "Dashboard",
   "/rides/new": "Rides",
   "/profile": "Profile",
+  "/analytics": "Analytics",
 };
 
 export function DashboardTopBar() {

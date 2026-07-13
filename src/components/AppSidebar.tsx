@@ -39,7 +39,7 @@ const navItems = [
   { label: "Compare", icon: GitCompare, href: "/home" },
   { label: "Bus Routes", icon: Bus, href: "/bus-routes" },
   { label: "Map", icon: Map, href: "/map" },
-  { label: "Analytics", icon: BarChart3, href: "/home" },
+  { label: "Analytics", icon: BarChart3, href: "/analytics" },
   { label: "Profile", icon: User, href: "/profile" },
 ];
 
