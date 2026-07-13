@@ -297,3 +297,36 @@
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+@utility gradient-text {
+  background: linear-gradient(135deg, #ecf39e 0%, #90a955 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@utility gradient-brand {
+  background: linear-gradient(135deg, #31572c 0%, #4f772d 50%, #90a955 100%);
+}
+
+@utility shadow-glow {
+  box-shadow: 0 0 20px rgba(144, 169, 85, 0.2);
+}
+
+@utility card-elevated {
+  background: linear-gradient(135deg, var(--surface) 0%, rgba(23, 41, 23, 0.6) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 10px 35px -10px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
