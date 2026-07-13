@@ -42,87 +42,6 @@ const MAP_STYLES: google.maps.MapTypeStyle[] = [
   { featureType: "water", elementType: "geometry", stylers: [{ color: "#060806" }] },
 ];
 
-export interface PresetRoute {
-  id: string;
-  title: string;
-  destination: string;
-  distance: string;
-  approxTime: string;
-  fareEstimate: string;
-  frequency: string;
-  tag: string;
-  iconColor: string;
-}
-
-const POPULAR_ROUTES: PresetRoute[] = [
-  {
-    id: "vja-pnbs",
-    title: "Vijayawada Bus Station (PNBS)",
-    destination: "Pandit Nehru Bus Station, Vijayawada, Andhra Pradesh",
-    distance: "38 km",
-    approxTime: "1h 10m",
-    fareEstimate: "₹45 - ₹65",
-    frequency: "Every 20 mins",
-    tag: "Most Popular",
-    iconColor: "text-[#1DB954] bg-[#1DB954]/15 border-[#1DB954]/30",
-  },
-  {
-    id: "gnt-ntr",
-    title: "Guntur Bus Stand (NTR Station)",
-    destination: "NTR Bus Station, Guntur, Andhra Pradesh",
-    distance: "30 km",
-    approxTime: "55 mins",
-    fareEstimate: "₹35 - ₹50",
-    frequency: "Every 30 mins",
-    tag: "High Frequency",
-    iconColor: "text-cyan-400 bg-cyan-500/15 border-cyan-500/30",
-  },
-  {
-    id: "tenali-stn",
-    title: "Tenali Railway & Bus Hub",
-    destination: "Tenali Bus Station, Tenali, Andhra Pradesh",
-    distance: "25 km",
-    approxTime: "45 mins",
-    fareEstimate: "₹30 - ₹40",
-    frequency: "Every 45 mins",
-    tag: "Express & Local",
-    iconColor: "text-purple-400 bg-purple-500/15 border-purple-500/30",
-  },
-  {
-    id: "mangalagiri-aiims",
-    title: "Mangalagiri Bus Stop & AIIMS",
-    destination: "Mangalagiri Bus Stop, Mangalagiri, Andhra Pradesh",
-    distance: "22 km",
-    approxTime: "40 mins",
-    fareEstimate: "₹25 - ₹35",
-    frequency: "Every 25 mins",
-    tag: "Medical Hub",
-    iconColor: "text-amber-400 bg-amber-500/15 border-amber-500/30",
-  },
-  {
-    id: "vja-benz",
-    title: "Benz Circle, Vijayawada Center",
-    destination: "Benz Circle, Vijayawada, Andhra Pradesh",
-    distance: "35 km",
-    approxTime: "1h 05m",
-    fareEstimate: "₹50 - ₹70",
-    frequency: "Every 20 mins",
-    tag: "City Center",
-    iconColor: "text-blue-400 bg-blue-500/15 border-blue-500/30",
-  },
-  {
-    id: "vga-airport",
-    title: "Gannavaram Airport (VGA)",
-    destination: "Vijayawada International Airport, Gannavaram, Andhra Pradesh",
-    distance: "55 km",
-    approxTime: "1h 30m",
-    fareEstimate: "₹80 - ₹120",
-    frequency: "Every 1 hour",
-    tag: "Airport Express",
-    iconColor: "text-red-400 bg-red-500/15 border-red-500/30",
-  },
-];
-
 export interface TransitStepInfo {
   instructions: string;
   distance: string;
@@ -156,8 +75,8 @@ export function BusRoutesExplorer() {
   const originInputRef = useRef<HTMLInputElement>(null);
   const destInputRef = useRef<HTMLInputElement>(null);
 
-  const [origin, setOrigin] = useState("VIT-AP University, Ainavolu, Andhra Pradesh");
-  const [destination, setDestination] = useState(POPULAR_ROUTES[0].destination);
+  const [origin, setOrigin] = useState("");
+  const [destination, setDestination] = useState("");
   const [loading, setLoading] = useState(false);
   const [locating, setLocating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -165,7 +84,6 @@ export function BusRoutesExplorer() {
   const [selectedItineraryId, setSelectedItineraryId] = useState<number>(0);
   const [mapReady, setMapReady] = useState(false);
   const [expandedCard, setExpandedCard] = useState<number | null>(0);
-  const [selectedPresetId, setSelectedPresetId] = useState<string>(POPULAR_ROUTES[0].id);
 
   const handleUseMyLocation = () => {
     if (typeof navigator === "undefined" || !navigator.geolocation) {
@@ -184,12 +102,15 @@ export function BusRoutesExplorer() {
             if (status === window.google.maps.GeocoderStatus.OK && results && results[0]) {
               const addr = results[0].formatted_address;
               setOrigin(addr);
-              setSelectedPresetId("");
-              fetchTransitDirections(addr, destination);
+              if (destination.trim()) {
+                fetchTransitDirections(addr, destination);
+              }
             } else {
               const fallbackStr = `${loc.lat.toFixed(4)}, ${loc.lng.toFixed(4)}`;
               setOrigin(fallbackStr);
-              fetchTransitDirections(fallbackStr, destination);
+              if (destination.trim()) {
+                fetchTransitDirections(fallbackStr, destination);
+              }
             }
           });
         } else {
@@ -367,10 +288,9 @@ export function BusRoutesExplorer() {
           const distKm = parseFloat(leg.distance?.text || "30") || 30;
           const durMins = Math.round((parseFloat(leg.duration?.text || "50") || 50) * 1.25); // Bus takes ~25% longer than car
 
-          // Find preset info if available
-          const preset = POPULAR_ROUTES.find((p) => p.destination.toLowerCase() === destText.toLowerCase());
-          const lineName = preset ? (preset.id === "vja-pnbs" ? "APSRTC 211 / Express" : preset.id === "gnt-ntr" ? "APSRTC Guntur Non-Stop" : "APSRTC College Shuttle") : "APSRTC Regional Bus";
-          const fareEst = preset ? preset.fareEstimate : `₹${Math.max(25, Math.round(distKm * 1.6))}`;
+          const destTitle = destText.split(",")[0] || "Destination";
+          const lineName = "APSRTC Regional Bus / Express";
+          const fareEst = `₹${Math.max(25, Math.round(distKm * 1.6))}`;
 
           const now = new Date();
           const depTimeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
@@ -389,7 +309,7 @@ export function BusRoutesExplorer() {
               steps: [
                 {
                   mode: "WALK",
-                  instructions: "Walk 350m from VIT AP Main Gate to Ainavolu Highway Bus Stop",
+                  instructions: `Walk to nearest main highway bus stop near ${origText.split(",")[0] || "origin"}`,
                   distance: "350 m",
                   duration: "4 mins",
                 },
@@ -397,18 +317,18 @@ export function BusRoutesExplorer() {
                   mode: "BUS",
                   lineName: lineName,
                   agency: "Andhra Pradesh State Road Transport Corporation (APSRTC)",
-                  departureStop: "Ainavolu University Stop",
-                  arrivalStop: preset ? preset.title : "Destination Main Bus Station",
+                  departureStop: "Nearest Regional Stop",
+                  arrivalStop: destTitle,
                   departureTime: depTimeStr,
                   arrivalTime: arrTimeStr,
                   numStops: Math.max(4, Math.round(distKm / 3.5)),
-                  instructions: `Board ${lineName} towards ${preset ? preset.title : "Destination Main Bus Station"}`,
+                  instructions: `Board ${lineName} towards ${destTitle}`,
                   distance: leg.distance?.text || `${distKm} km`,
                   duration: `${durMins - 6} mins`,
                 },
                 {
                   mode: "WALK",
-                  instructions: "Arrive and exit via Station Main Platform / Transit Hub",
+                  instructions: `Arrive at ${destTitle} transit point`,
                   distance: "100 m",
                   duration: "2 mins",
                 },
@@ -416,7 +336,7 @@ export function BusRoutesExplorer() {
             },
             {
               id: 1,
-              summary: "VIT AP Student Pooling Shuttle / RTC Ordinary",
+              summary: "RTC Suburban Shuttle / Pooling Service",
               duration: `${durMins + 15} mins`,
               distance: leg.distance?.text || `${distKm} km`,
               departureTime: new Date(now.getTime() + 20 * 60000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
@@ -425,7 +345,7 @@ export function BusRoutesExplorer() {
               steps: [
                 {
                   mode: "WALK",
-                  instructions: "Walk to VIT AP Campus Bus Bay",
+                  instructions: "Walk to Campus / Local Bus Bay",
                   distance: "200 m",
                   duration: "3 mins",
                 },
@@ -433,12 +353,12 @@ export function BusRoutesExplorer() {
                   mode: "BUS",
                   lineName: "RTC Student Shuttle (Suburban)",
                   agency: "APSRTC Suburban Division",
-                  departureStop: "Ainavolu Campus Gate Stop",
-                  arrivalStop: preset ? preset.title : "Destination Bus Stand",
+                  departureStop: "Origin Local Stop",
+                  arrivalStop: destTitle,
                   departureTime: "In 20 mins",
                   arrivalTime: `${durMins + 15} mins later`,
                   numStops: Math.max(6, Math.round(distKm / 2.5)),
-                  instructions: "Board RTC Ordinary / Shuttle along Amaravati Road",
+                  instructions: `Board RTC Shuttle towards ${destTitle}`,
                   distance: leg.distance?.text || `${distKm} km`,
                   duration: `${durMins + 10} mins`,
                 },
@@ -456,23 +376,13 @@ export function BusRoutesExplorer() {
     );
   };
 
-  // Trigger initial search when map becomes ready
-  useEffect(() => {
-    if (mapReady) {
-      fetchTransitDirections(origin, destination);
-    }
-  }, [mapReady]);
-
-  const handleSelectPreset = (preset: PresetRoute) => {
-    setSelectedPresetId(preset.id);
-    setDestination(preset.destination);
-    fetchTransitDirections(origin, preset.destination);
-  };
-
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSelectedPresetId("");
-    fetchTransitDirections(origin, destination);
+    if (origin.trim() && destination.trim()) {
+      fetchTransitDirections(origin, destination);
+    } else {
+      setError("Please enter both origin point and destination.");
+    }
   };
 
   const handleSelectRouteIndex = (idx: number) => {
@@ -537,68 +447,6 @@ export function BusRoutesExplorer() {
         </div>
       </form>
 
-      {/* Popular Campus Bus Routes Quick-Select Grid */}
-      <div>
-        <div className="flex items-center justify-between mb-3 px-1">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-primary" />
-            <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">
-              Popular Campus Bus & Transit Hubs
-            </h2>
-          </div>
-          <span className="text-xs text-muted-foreground font-medium">Click to view live schedule & route</span>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {POPULAR_ROUTES.map((preset) => {
-            const isSelected = selectedPresetId === preset.id;
-            return (
-              <div
-                key={preset.id}
-                onClick={() => handleSelectPreset(preset)}
-                className={`group cursor-pointer rounded-xl border p-4 transition-all duration-200 ${
-                  isSelected
-                    ? "border-[#1DB954] bg-[#1DB954]/10 shadow-md shadow-[#1DB954]/10"
-                    : "border-border/40 bg-card/70 hover:border-border hover:bg-card hover:shadow-lg"
-                }`}
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex items-center gap-2.5">
-                    <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-xl border ${preset.iconColor}`}
-                    >
-                      <Bus className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
-                        {preset.title}
-                      </h3>
-                      <p className="text-[11px] text-muted-foreground mt-0.5 font-medium">
-                        {preset.frequency}
-                      </p>
-                    </div>
-                  </div>
-                  <Badge
-                    variant="outline"
-                    className="text-[10px] font-bold tracking-wider px-2 py-0.5 border-white/10 bg-white/5 text-foreground/80"
-                  >
-                    {preset.tag}
-                  </Badge>
-                </div>
-
-                <div className="mt-3 flex items-center justify-between border-t border-border/20 pt-2.5 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1 font-semibold text-foreground/90">
-                    <Clock className="h-3.5 w-3.5 text-primary" /> {preset.approxTime}
-                  </span>
-                  <span className="font-medium">{preset.distance}</span>
-                  <span className="font-extrabold text-primary">{preset.fareEstimate}</span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
       {/* Main Map & Itinerary Results Split Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 min-h-[560px]">
         {/* Left Side: Live Google Transit Map */}
@@ -648,8 +496,8 @@ export function BusRoutesExplorer() {
           {!loading && !error && itineraries.length === 0 && (
             <div className="flex flex-1 flex-col items-center justify-center rounded-xl border border-border/40 bg-card p-6 text-center">
               <Bus className="h-8 w-8 text-muted-foreground mb-3" />
-              <p className="font-bold text-sm text-foreground">Select a Popular Destination</p>
-              <p className="text-xs text-muted-foreground mt-1">Pick a card above or enter custom coordinates</p>
+              <p className="font-bold text-sm text-foreground">Enter Pickup & Destination</p>
+              <p className="text-xs text-muted-foreground mt-1">Type or use GPS above to discover live bus routes, timings, and ticket prices.</p>
             </div>
           )}
 
