@@ -451,8 +451,15 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
                 {data.matches.map((m) => {
                   const quality = matchQuality(m.score);
                   return (
-                    <li key={m.ride.id} className="surface-card p-4 transition hover:border-primary/40 hover:shadow-md">
-                      <div className="flex items-start justify-between gap-4">
+                    <li key={m.ride.id} className={`surface-card p-4 transition hover:shadow-md relative ${m.isAiTopPick ? "border-2 border-[#1DB954] bg-gradient-to-r from-[#1DB954]/10 to-transparent" : "hover:border-primary/40"}`}>
+                      {m.isAiTopPick && (
+                        <div className="absolute -top-3 -left-1">
+                          <span className="inline-flex items-center gap-1 bg-[#1DB954] text-black text-[10px] font-bold px-2 py-0.5 rounded shadow-lg uppercase tracking-wider">
+                            <Sparkles className="h-3 w-3" /> AI Top Pick
+                          </span>
+                        </div>
+                      )}
+                      <div className="flex items-start justify-between gap-4 mt-1">
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
                             <Badge className="bg-primary/15 text-primary hover:bg-primary/15">{m.score}% match</Badge>
@@ -482,6 +489,11 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
                               </span>
                             )}
                           </div>
+                          {m.matchReason && (
+                            <div className="mt-3 text-xs font-medium text-[#1DB954]">
+                              {m.matchReason}
+                            </div>
+                          )}
                         </div>
                         <Button
                           size="sm"

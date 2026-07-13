@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSuspenseQuery, useQueryClient, queryOptions } from "@tanstack/react-query";
+import { useSuspenseQuery, useQuery, useQueryClient, queryOptions } from "@tanstack/react-query";
 import { listMyRides, listMyGroups, listLiveRides, listCollegeClassmates, getMyProfile } from "@/lib/rides.queries";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -48,6 +48,42 @@ const quickActions = [
 /*                  PAGE ROOT                     */
 /* ────────────────────────────────────────────── */
 
+function AiBanner() {
+  const { data: myRides } = useQuery({
+    queryKey: ["my-rides"],
+    queryFn: listMyRides,
+  });
+
+  const latestRide = myRides && myRides.length > 0 ? myRides[0] : null;
+  const viewMatchesHref = latestRide ? `/rides/${latestRide.id}` : "/rides/new";
+
+  return (
+    <section className="rounded-xl border-l-4 border-[#1DB954] bg-[#1DB954]/8 p-5">
+      <div className="flex items-center gap-1.5 mb-2">
+        <Sparkles className="h-3.5 w-3.5 text-[#1DB954]" />
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-[#1DB954]">
+          AI Smart Recommendation
+        </span>
+      </div>
+      <p className="text-sm text-foreground/80 leading-relaxed">
+        Find matches heading your direction. AI-powered suggestions available when you post a ride.
+      </p>
+      <div className="mt-3 flex items-center gap-2">
+        <Link href={viewMatchesHref}>
+          <Button size="sm" className="h-7 rounded-lg bg-[#1DB954] text-white hover:bg-[#1DB954]/90 text-xs px-3">
+            View matches
+          </Button>
+        </Link>
+        <Link href="/map">
+          <Button size="sm" variant="outline" className="h-7 rounded-lg text-xs px-3 border-[#1DB954]/40 text-[#1DB954] hover:bg-[#1DB954]/10">
+            Compare all options
+          </Button>
+        </Link>
+      </div>
+    </section>
+  );
+}
+
 export default function HomePage() {
   const geo = useGeolocation();
 
@@ -81,25 +117,7 @@ export default function HomePage() {
       <GeoBanner geo={geo} />
 
       {/* ── 2. AI Smart Recommendation Banner ── */}
-      <section className="rounded-xl border-l-4 border-[#1DB954] bg-[#1DB954]/8 p-5">
-        <div className="flex items-center gap-1.5 mb-2">
-          <Sparkles className="h-3.5 w-3.5 text-[#1DB954]" />
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-[#1DB954]">
-            AI Smart Recommendation
-          </span>
-        </div>
-        <p className="text-sm text-foreground/80 leading-relaxed">
-          Find matches heading your direction. AI-powered suggestions available when you post a ride.
-        </p>
-        <div className="mt-3 flex items-center gap-2">
-          <Button size="sm" className="h-7 rounded-lg bg-[#1DB954] text-white hover:bg-[#1DB954]/90 text-xs px-3">
-            View matches
-          </Button>
-          <Button size="sm" variant="outline" className="h-7 rounded-lg text-xs px-3 border-[#1DB954]/40 text-[#1DB954] hover:bg-[#1DB954]/10">
-            Compare all options
-          </Button>
-        </div>
-      </section>
+      <AiBanner />
 
       {/* ── 3. Stats Cards Row ── */}
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">

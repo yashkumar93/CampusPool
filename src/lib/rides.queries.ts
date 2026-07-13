@@ -142,32 +142,31 @@ export async function findMatches({ rideId }: { rideId: string }) {
     .limit(200);
   if (e2) throw new Error(e2.message);
 
+  const allCandidateCreatorIds = Array.from(new Set((candidates ?? []).map(c => c.creator_id)));
+  allCandidateCreatorIds.push(userId); // ensure my profile is fetched
+
+  const { data: allProfiles } = await supabase
+    .from("profiles_public")
+    .select("id, full_name, department, year, rating_avg, rating_count, avatar_url")
+    .in("id", allCandidateCreatorIds);
+
+  const profileMap = new Map((allProfiles ?? []).map((p) => [p.id, p]));
+  const myProfile = profileMap.get(userId) || null;
+
   const mineForMatch = mine as unknown as RideForMatch;
   const scored = (candidates ?? [])
     .map((c) => {
-      const s = scoreRides(mineForMatch, c as unknown as RideForMatch);
-      return s ? { ride: c, ...s } : null;
+      const candidateProfile = profileMap.get(c.creator_id) || null;
+      const s = scoreRides(mineForMatch, c as unknown as RideForMatch, myProfile, candidateProfile);
+      return s ? { ride: c, ...s, profile: candidateProfile } : null;
     })
     .filter((x): x is NonNullable<typeof x> => x !== null)
     .sort((a, b) => b.score - a.score)
     .slice(0, 20);
 
-  const creatorIds = Array.from(new Set(scored.map((s) => s.ride.creator_id)));
-  const { data: profiles } = creatorIds.length
-    ? await supabase
-        .from("profiles_public")
-        .select("id, full_name, department, year, rating_avg, rating_count, avatar_url")
-        .in("id", creatorIds)
-    : { data: [] };
-
-  const profileMap = new Map((profiles ?? []).map((p) => [p.id, p]));
-
   return {
     mine,
-    matches: scored.map((s) => ({
-      ...s,
-      profile: profileMap.get(s.ride.creator_id) ?? null,
-    })),
+    matches: scored,
   };
 }
 

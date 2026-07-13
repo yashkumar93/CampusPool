@@ -57,9 +57,16 @@ export interface MatchScore {
   destKm: number;
   detourKm: number;
   timeDiffMin: number;
+  matchReason?: string;
+  isAiTopPick?: boolean;
 }
 
-export function scoreRides(a: RideForMatch, b: RideForMatch): MatchScore | null {
+export function scoreRides(
+  a: RideForMatch,
+  b: RideForMatch,
+  myProfile?: any,
+  candidateProfile?: any
+): MatchScore | null {
   // Time window overlap
   const aT = new Date(a.depart_at).getTime();
   const bT = new Date(b.depart_at).getTime();
@@ -85,11 +92,41 @@ export function scoreRides(a: RideForMatch, b: RideForMatch): MatchScore | null 
   if (pickupKm > 5) return null;
   if (detourKm > 8) return null;
 
-  // Scoring: weight pickup proximity, route corridor overlap, time closeness
-  const pickupScore = Math.max(0, 1 - pickupKm / 5) * 40;
-  const detourScore = Math.max(0, 1 - detourKm / 8) * 40;
-  const timeScore = Math.max(0, 1 - diffMin / combinedFlex) * 20;
-  const score = Math.round(pickupScore + detourScore + timeScore);
+  // Scoring weights: Route (40%), Time (30%), Affinity (20%), Extra (10%)
+  const pickupScore = Math.max(0, 1 - pickupKm / 5) * 20;
+  const detourScore = Math.max(0, 1 - detourKm / 8) * 20;
+  const timeScore = Math.max(0, 1 - diffMin / combinedFlex) * 30;
+  
+  let affinityScore = 0;
+  let matchReasons = [];
 
-  return { score, pickupKm, destKm, detourKm, timeDiffMin: diffMin };
+  if (myProfile && candidateProfile) {
+    if (myProfile.department === candidateProfile.department && myProfile.department) {
+      affinityScore += 10;
+      matchReasons.push("Same department");
+    }
+    if (myProfile.year === candidateProfile.year && myProfile.year) {
+      affinityScore += 5;
+    }
+    if (candidateProfile.rating_avg && candidateProfile.rating_avg >= 4.5) {
+      affinityScore += 5;
+      matchReasons.push("Highly rated");
+    }
+  }
+
+  // Base AI reasoning
+  if (diffMin <= 5) matchReasons.push("Perfect time alignment");
+  if (detourKm <= 1) matchReasons.push("Minimal detour");
+
+  const score = Math.round(pickupScore + detourScore + timeScore + affinityScore + 10 /* base padding for generic */);
+  
+  let matchReason = undefined;
+  let isAiTopPick = false;
+  
+  if (score >= 85) {
+    isAiTopPick = true;
+    matchReason = "✨ " + score + "% Match: " + (matchReasons.length > 0 ? matchReasons.slice(0, 2).join(" & ") : "Excellent route match");
+  }
+
+  return { score: Math.min(100, score), pickupKm, destKm, detourKm, timeDiffMin: diffMin, matchReason, isAiTopPick };
 }
