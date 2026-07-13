@@ -17,7 +17,7 @@ export default async function AuthenticatedLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground dark">
       <AppHeader />
       <main className="mx-auto max-w-5xl px-5 py-6">{children}</main>
     </div>

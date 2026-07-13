@@ -73,8 +73,23 @@
 }
 
 .dark {
-  --background: #171e19;
+  --background: #121713;
   --foreground: #ffffff;
+  --surface: #1a221b;
+  --surface-foreground: #ffffff;
+  --card: #1a221b;
+  --card-foreground: #ffffff;
+  --popover: #1f2a20;
+  --popover-foreground: #ffffff;
+  --primary: #ffe17c;
+  --primary-foreground: #000000;
+  --secondary: #b7c6c2;
+  --secondary-foreground: #000000;
+  --muted: #222d23;
+  --muted-foreground: #a1a1aa;
+  --border: #2c3a2e;
+  --input: #151c16;
+  --ring: #ffe17c;
 }
 
 /* ── Base layer ── */
@@ -102,7 +117,7 @@
     font-weight: 800;
     letter-spacing: -0.03em;
     text-wrap: balance;
-    color: #000000;
+    color: inherit;
   }
 }
 
