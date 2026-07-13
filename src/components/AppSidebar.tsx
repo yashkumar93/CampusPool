@@ -15,6 +15,23 @@ import {
   Zap,
 } from "lucide-react";
 
+import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { LogOut } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/home" },
   { label: "Find Ride", icon: Search, href: "/rides/new?role=passenger" },
@@ -28,6 +45,17 @@ const navItems = [
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const qc = useQueryClient();
+
+  const signOut = async () => {
+    await qc.cancelQueries();
+    qc.clear();
+    await supabase.auth.signOut();
+    toast.success("Signed out");
+    router.refresh();
+    router.push("/auth");
+  };
 
   return (
     <aside className="fixed inset-y-0 left-0 z-30 flex w-60 flex-col bg-[#0a0f0b] border-r border-border/40">
@@ -65,11 +93,37 @@ export function AppSidebar() {
         })}
       </nav>
 
-      {/* SOS Button */}
-      <div className="p-3">
+      {/* Logout & SOS Section */}
+      <div className="p-3 space-y-2">
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <button
+              type="button"
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-white/5 hover:text-red-400 cursor-pointer"
+            >
+              <LogOut className="h-[18px] w-[18px]" />
+              Logout
+            </button>
+          </AlertDialogTrigger>
+          <AlertDialogContent className="bg-background border border-border">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Sign out?</AlertDialogTitle>
+              <AlertDialogDescription className="text-xs text-muted-foreground mt-2">
+                Are you sure you want to sign out of NxtPool?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="flex gap-2 justify-end mt-4">
+              <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={signOut} className="bg-red-600 hover:bg-red-700 text-white cursor-pointer">
+                Sign out
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
         <button
           type="button"
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-red-600 px-3 py-2.5 text-sm font-bold text-white transition-colors hover:bg-red-700"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-red-600 px-3 py-2.5 text-sm font-bold text-white transition-colors hover:bg-red-700 cursor-pointer"
         >
           <ShieldAlert className="h-4 w-4" />
           SOS Emergency

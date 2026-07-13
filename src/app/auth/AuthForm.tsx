@@ -80,10 +80,26 @@ export function AuthForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [signedUp, setSignedUp] = useState<string | null>(null);
 
+  // Forgot Password / Reset Password States
+  const [forgotPassword, setForgotPassword] = useState(false);
+  const [isResetMode, setIsResetMode] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+
   // Active campus & subdomain resolution logic
   const [selectedCampusId, setSelectedCampusId] = useState<string>("other");
   const [activeCampus, setActiveCampus] = useState<any>(CAMPUSES[0]);
   const [isGenericHost, setIsGenericHost] = useState(true);
+
+  // Check for recovery hash fragment on mount
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const hash = window.location.hash;
+    const params = new URLSearchParams(window.location.search);
+    if (hash.includes("type=recovery") || params.get("type") === "recovery") {
+      setIsResetMode(true);
+      toast.success("Authentication confirmed. Please set your new password below.");
+    }
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -196,6 +212,34 @@ export function AuthForm() {
     toast.success("Check your inbox to verify your email");
   };
 
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return toast.error("Please enter your college email address first");
+    const domain = email.toLowerCase().trim().split("@")[1] ?? "";
+    if (!ALLOWED_EMAIL_DOMAINS.includes(domain)) {
+      return toast.error("Access denied. University email is not whitelisted.");
+    }
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: `${window.location.origin}/auth?type=recovery`,
+    });
+    setLoading(false);
+    if (error) return toast.error(error.message);
+    toast.success("Password reset link sent! Check your email inbox.");
+    setForgotPassword(false);
+  };
+
+  const handleUpdatePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword.length < 8) return toast.error("Password must be at least 8 characters");
+    setLoading(true);
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    setLoading(false);
+    if (error) return toast.error(error.message);
+    toast.success("Password updated successfully! Redirecting you...");
+    router.push("/home");
+  };
+
   return (
     <div className="min-h-screen bg-[#171e19] relative overflow-hidden font-sans">
       {/* Floating dot pattern background overlay */}
@@ -214,7 +258,81 @@ export function AuthForm() {
       </header>
 
       <div className="relative mx-auto flex max-w-md flex-col px-5 py-16 animate-fade-in-up">
-        {signedUp ? (
+        {isResetMode ? (
+          <div className="bg-white border-2 border-black rounded-xl p-8 shadow-neo-lg text-black">
+            <h1 className="text-3xl font-heading font-extrabold tracking-tighter text-black">Set new password</h1>
+            <p className="mt-2 text-sm text-neutral-600 font-sans font-medium">
+              Enter your new account password (at least 8 characters).
+            </p>
+            <form onSubmit={handleUpdatePassword} className="space-y-4 mt-6">
+              <div className="space-y-1.5">
+                <Label htmlFor="new-password" className="text-black font-bold">New password</Label>
+                <div className="relative">
+                  <Input
+                    id="new-password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="pr-10 bg-white border-2 border-black text-black placeholder:text-neutral-400 focus-visible:ring-black h-11"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-2.5 top-3.5 text-neutral-500 hover:text-black transition-colors"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+              <button
+                type="submit"
+                className="w-full h-12 btn-neo-primary font-bold mt-4 flex items-center justify-center gap-2 cursor-pointer"
+                disabled={loading}
+              >
+                {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+                {loading ? "Saving..." : "Update password"}
+              </button>
+            </form>
+          </div>
+        ) : forgotPassword ? (
+          <div className="bg-white border-2 border-black rounded-xl p-8 shadow-neo-lg text-black">
+            <h1 className="text-3xl font-heading font-extrabold tracking-tighter text-black">Reset password</h1>
+            <p className="mt-2 text-sm text-neutral-600 font-sans font-medium">
+              Enter your college email below and we will send you a password reset link.
+            </p>
+            <form onSubmit={handleResetPassword} className="space-y-4 mt-6">
+              <div className="space-y-1.5">
+                <Label htmlFor="reset-email" className="text-black font-bold">College email</Label>
+                <Input
+                  id="reset-email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@university.edu"
+                  className="bg-white border-2 border-black text-black placeholder:text-neutral-400 focus-visible:ring-black h-11"
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full h-12 btn-neo-primary font-bold mt-4 flex items-center justify-center gap-2 cursor-pointer"
+                disabled={loading}
+              >
+                {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+                {loading ? "Sending..." : "Send reset link"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setForgotPassword(false)}
+                className="w-full h-12 btn-neo-secondary font-bold cursor-pointer"
+              >
+                Back to sign in
+              </button>
+            </form>
+          </div>
+        ) : signedUp ? (
           <div className="bg-[#ffe17c] border-2 border-black rounded-xl p-8 shadow-neo-lg text-black text-sm space-y-4">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-black border-2 border-black">
@@ -366,6 +484,15 @@ export function AuthForm() {
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                     </div>
+                  </div>
+                  <div className="flex items-center justify-end">
+                    <button
+                      type="button"
+                      onClick={() => setForgotPassword(true)}
+                      className="text-xs font-bold text-neutral-600 hover:text-black hover:underline cursor-pointer"
+                    >
+                      Forgot password?
+                    </button>
                   </div>
                   <button 
                     type="submit" 
