@@ -285,10 +285,7 @@ export function AuthForm() {
       </header>
 
       <div className="relative mx-auto flex max-w-md flex-col px-5 py-16 animate-fade-in-up">
-        <div className="text-xs uppercase tracking-[0.2em] text-primary flex items-center gap-1.5 font-semibold">
-          <ShieldCheck className="h-3.5 w-3.5" /> {currentCampus.name} verified access
-        </div>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight">Sign in to NxtPool</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Sign in to NxtPool</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Sign in or create an account using your verified organization or college email.
         </p>
