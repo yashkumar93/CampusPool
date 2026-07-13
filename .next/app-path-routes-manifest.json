@@ -3,8 +3,8 @@
   "/auth/page": "/auth",
   "/page": "/",
   "/(authenticated)/groups/[groupId]/page": "/groups/[groupId]",
-  "/(authenticated)/profile/page": "/profile",
-  "/(authenticated)/rides/new/page": "/rides/new",
   "/(authenticated)/home/page": "/home",
-  "/(authenticated)/rides/[rideId]/page": "/rides/[rideId]"
+  "/(authenticated)/rides/[rideId]/page": "/rides/[rideId]",
+  "/(authenticated)/rides/new/page": "/rides/new",
+  "/(authenticated)/profile/page": "/profile"
 }

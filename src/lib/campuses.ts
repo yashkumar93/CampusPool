@@ -256,7 +256,7 @@ export function getActiveCampus(profileCollege?: string): CampusConfig {
   }
 
   // 3. Try localStorage
-  const saved = localStorage.getItem("campuspool_active_campus");
+  const saved = localStorage.getItem("nxtpool_active_campus");
   if (saved) {
     const match = CAMPUSES.find((c) => c.id === saved);
     if (match) return match;

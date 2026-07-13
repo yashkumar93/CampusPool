@@ -18,12 +18,12 @@ const bricolage = Bricolage_Grotesque({
 });
 
 export const metadata: Metadata = {
-  title: "CampusPool — Verified student ride sharing",
-  description: "CampusPool connects verified university students traveling the same way at similar times. Share rides, split cost, travel with classmates you can trust.",
-  authors: [{ name: "CampusPool" }],
+  title: "NxtPool — Verified student ride sharing",
+  description: "NxtPool connects verified university students traveling the same way at similar times. Share rides, split cost, travel with classmates you can trust.",
+  authors: [{ name: "NxtPool" }],
   openGraph: {
-    title: "CampusPool — Verified student ride sharing",
-    description: "CampusPool connects verified university students traveling the same way at similar times. Share rides, split cost, travel with classmates you can trust.",
+    title: "NxtPool — Verified student ride sharing",
+    description: "NxtPool connects verified university students traveling the same way at similar times. Share rides, split cost, travel with classmates you can trust.",
     type: "website",
     images: [
       {
@@ -33,8 +33,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "CampusPool — Verified student ride sharing",
-    description: "CampusPool connects verified university students traveling the same way at similar times. Share rides, split cost, travel with classmates you can trust.",
+    title: "NxtPool — Verified student ride sharing",
+    description: "NxtPool connects verified university students traveling the same way at similar times. Share rides, split cost, travel with classmates you can trust.",
     images: ["https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6a431ab8-90ab-44ad-b051-abd9bdda4608/id-preview-15bb0a69--9371b7a6-ccaf-4aa8-85ed-8aad8afcf597.lovable.app-1783768239143.png"],
   },
   icons: {

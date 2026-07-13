@@ -20,8 +20,8 @@ type Props = {
 declare global {
   interface Window {
     google?: typeof google;
-    __campuspoolMapsCb?: () => void;
-    __campuspoolMapsLoading?: Promise<void>;
+    __nxtpoolMapsCb?: () => void;
+    __nxtpoolMapsLoading?: Promise<void>;
   }
 }
 

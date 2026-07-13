@@ -38,7 +38,7 @@ export default function HomePage() {
         <div className="relative isolate flex flex-col gap-5 p-6 sm:p-7">
           <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/15 blur-3xl" />
           <div>
-            <div className="text-[10px] uppercase tracking-[0.25em] text-primary font-semibold">CampusPool</div>
+            <div className="text-[10px] uppercase tracking-[0.25em] text-primary font-semibold">NxtPool</div>
             <h1 className="mt-1.5 text-3xl font-bold tracking-tight sm:text-4xl leading-[1.1]">
               Where to <span className="italic">today</span>?
             </h1>

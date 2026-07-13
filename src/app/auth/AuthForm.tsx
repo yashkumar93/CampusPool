@@ -167,11 +167,11 @@ export function AuthForm() {
       setSelectedCampusId(active.id);
 
       const hostname = window.location.hostname;
-      // If we are on a bare domain (e.g. localhost, campuspool.com, or IP)
+      // If we are on a bare domain (e.g. localhost, nxtpool.com, or IP)
       if (
         hostname === "localhost" ||
         hostname === "127.0.0.1" ||
-        hostname === "campuspool.com" ||
+        hostname === "nxtpool.com" ||
         hostname.split(".").length === 1
       ) {
         setIsGenericHost(true);
@@ -278,7 +278,7 @@ export function AuthForm() {
             <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
               <RouteIcon className="h-4 w-4" />
             </span>
-            CampusPool
+            NxtPool
           </Link>
           <Link href="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">← Back</Link>
         </div>
@@ -288,7 +288,7 @@ export function AuthForm() {
         <div className="text-xs uppercase tracking-[0.2em] text-primary flex items-center gap-1.5 font-semibold">
           <ShieldCheck className="h-3.5 w-3.5" /> {currentCampus.name} verified access
         </div>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight">Sign in to CampusPool</h1>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight">Sign in to NxtPool</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Sign in or create an account using your verified organization or college email.
         </p>

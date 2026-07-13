@@ -50,7 +50,7 @@ export function AppHeader() {
             <span className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
               <RouteIcon className="h-4 w-4" />
             </span>
-            CampusPool
+            NxtPool
           </Link>
           <nav className="flex items-center gap-1">
             <Tooltip>
@@ -93,7 +93,7 @@ export function AppHeader() {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Sign out?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Are you sure you want to sign out of CampusPool?
+                    Are you sure you want to sign out of NxtPool?
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
