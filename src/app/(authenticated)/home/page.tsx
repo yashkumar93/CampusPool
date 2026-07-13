@@ -9,7 +9,7 @@ import {
   MapPin, ArrowRight, Clock, Plus, Users, MessageCircle,
   Car, UserRound, Radio, LocateFixed, ShieldAlert, Star,
   CirclePlus, Search, GitCompare, Navigation, IndianRupee,
-  Leaf, Route, Sparkles,
+  Leaf, Route, Sparkles, Bus,
 } from "lucide-react";
 import { Suspense, useEffect, useState } from "react";
 import { useGeolocation } from "@/hooks/useGeolocation";
@@ -38,8 +38,8 @@ function relTime(iso: string) {
 const quickActions = [
   { label: "Offer Ride", icon: CirclePlus, href: "/rides/new?role=driver" },
   { label: "Find Ride", icon: Search, href: "/rides/new?role=passenger" },
-  { label: "Compare", icon: GitCompare, href: "#" },
-  { label: "Navigate", icon: Navigation, href: "#" },
+  { label: "Bus Routes", icon: Bus, href: "/bus-routes" },
+  { label: "Live Map", icon: Navigation, href: "/map" },
 ] as const;
 
 

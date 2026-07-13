@@ -37,7 +37,7 @@ const navItems = [
   { label: "Find Ride", icon: Search, href: "/rides/new?role=passenger" },
   { label: "Offer Ride", icon: CarFront, href: "/rides/new?role=driver" },
   { label: "Compare", icon: GitCompare, href: "/home" },
-  { label: "Bus Routes", icon: Bus, href: "/home" },
+  { label: "Bus Routes", icon: Bus, href: "/bus-routes" },
   { label: "Map", icon: Map, href: "/map" },
   { label: "Analytics", icon: BarChart3, href: "/home" },
   { label: "Profile", icon: User, href: "/profile" },
