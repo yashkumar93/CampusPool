@@ -198,46 +198,10 @@ export function NewRideForm() {
               <div className="space-y-1.5">
                 <Label className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-primary" /> Pickup</Label>
                 <LocationInput value={pickup} onChange={setPickup} placeholder="Search or use current location" biasLat={activeCampus.defaultCoordinates.lat} biasLng={activeCampus.defaultCoordinates.lng} />
-                {/* Quick landmarks */}
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {quickLandmarks.slice(0, 5).map((lm) => (
-                    <button
-                      key={lm.id}
-                      type="button"
-                      onClick={() => {
-                        setPickup({ label: lm.label, lat: lm.lat, lng: lm.lng });
-                      }}
-                      className={cn(
-                        "inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-[11px] transition-colors hover:border-primary/50 hover:text-primary",
-                        pickup?.label === lm.label && "border-primary bg-primary/10 text-primary",
-                      )}
-                    >
-                      <MapPin className="h-2.5 w-2.5" /> {lm.label.replace(new RegExp(`${activeCampus.name}\\s*`, "i"), "")}
-                    </button>
-                  ))}
-                </div>
               </div>
               <div className="space-y-1.5">
                 <Label className="flex items-center gap-1.5"><Navigation className="h-3.5 w-3.5 text-primary" /> Destination</Label>
                 <LocationInput value={dest} onChange={setDest} placeholder="Where to?" biasLat={activeCampus.defaultCoordinates.lat} biasLng={activeCampus.defaultCoordinates.lng} />
-                {/* Quick landmarks */}
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {quickLandmarks.slice(0, 5).map((lm) => (
-                    <button
-                      key={lm.id}
-                      type="button"
-                      onClick={() => {
-                        setDest({ label: lm.label, lat: lm.lat, lng: lm.lng });
-                      }}
-                      className={cn(
-                        "inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-[11px] transition-colors hover:border-primary/50 hover:text-primary",
-                        dest?.label === lm.label && "border-primary bg-primary/10 text-primary",
-                      )}
-                    >
-                      <MapPin className="h-2.5 w-2.5" /> {lm.label.replace(new RegExp(`${activeCampus.name}\\s*`, "i"), "")}
-                    </button>
-                  ))}
-                </div>
                 {sameLocation && (
                   <p className="text-xs text-destructive mt-1">Pickup and destination can't be the same</p>
                 )}
