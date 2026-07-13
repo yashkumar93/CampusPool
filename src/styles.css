@@ -63,43 +63,43 @@
   --radius: 0.625rem;
   --font-sans: var(--font-sans-family, sans-serif);
   --font-heading: var(--font-heading-family, serif);
-  /* Evergreen Forest Theme */
-  --background: #0e1f0e;
-  --foreground: #e8f0e4;
-  --surface: #172917;
-  --surface-foreground: #f0f7f0;
-  --card: #172917;
-  --card-foreground: #f0f7f0;
-  --popover: #1a2e1a;
-  --popover-foreground: #f0f7f0;
-  --primary: #ecf39e;
-  --primary-foreground: #0e1f0e;
-  --secondary: #243d22;
-  --secondary-foreground: #e8f0e4;
-  --muted: #1e331e;
-  --muted-foreground: #8aad82;
-  --accent: #d4e67a;
-  --accent-foreground: #0e1f0e;
-  --destructive: #bf3b3b;
-  --destructive-foreground: #ffffff;
-  --success: #7a9a44;
-  --success-foreground: #0e1f0e;
-  --border: #263e24;
-  --input: #1c321b;
-  --ring: #d4e67a;
-  --chart-1: #31572c;
-  --chart-2: #4f772d;
-  --chart-3: #90a955;
-  --chart-4: #ecf39e;
-  --chart-5: #132a13;
-  --sidebar: #0a180a;
-  --sidebar-foreground: #8aad82;
-  --sidebar-primary: #ecf39e;
-  --sidebar-primary-foreground: #0e1f0e;
-  --sidebar-accent: #162716;
-  --sidebar-accent-foreground: #e8f0e4;
-  --sidebar-border: #1a2e1a;
-  --sidebar-ring: #ecf39e;
+  /* Spotify Theme */
+  --background: #121212;
+  --foreground: #FFFFFF;
+  --surface: #1A1A1A;
+  --surface-foreground: #FFFFFF;
+  --card: #1A1A1A;
+  --card-foreground: #FFFFFF;
+  --popover: #282828;
+  --popover-foreground: #A7A7A7;
+  --primary: #1DB954;
+  --primary-foreground: #000000;
+  --secondary: #282828;
+  --secondary-foreground: #A7A7A7;
+  --muted: #1A1A1A;
+  --muted-foreground: #A7A7A7;
+  --accent: #1ED760;
+  --accent-foreground: #000000;
+  --destructive: #F15E6C;
+  --destructive-foreground: #FFFFFF;
+  --success: #1DB954;
+  --success-foreground: #000000;
+  --border: #3E3E3E;
+  --input: #282828;
+  --ring: #1DB954;
+  --chart-1: #1DB954;
+  --chart-2: #1ED760;
+  --chart-3: #A7A7A7;
+  --chart-4: #FFFFFF;
+  --chart-5: #121212;
+  --sidebar: #121212;
+  --sidebar-foreground: #A7A7A7;
+  --sidebar-primary: #1DB954;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #1A1A1A;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: #3E3E3E;
+  --sidebar-ring: #1DB954;
 }
 
 .dark {
@@ -127,12 +127,12 @@
     background-color: var(--color-background);
     background-image:
       /* Top canopy glow */
-      radial-gradient(ellipse 90% 50% at 50% -5%, rgba(79, 119, 45, 0.3), transparent 60%),
+      radial-gradient(ellipse 90% 50% at 50% -5%, rgba(29, 185, 84, 0.12), transparent 60%),
       /* Bottom-right warmth */
-      radial-gradient(ellipse 40% 50% at 95% 90%, rgba(144, 169, 85, 0.06), transparent 50%),
+      radial-gradient(ellipse 40% 50% at 95% 90%, rgba(30, 215, 96, 0.03), transparent 50%),
       /* Subtle cross-hatch texture */
-      linear-gradient(rgba(236, 243, 158, 0.018) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(236, 243, 158, 0.018) 1px, transparent 1px);
+      linear-gradient(rgba(29, 185, 84, 0.01) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(29, 185, 84, 0.01) 1px, transparent 1px);
     background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
     background-attachment: fixed;
     color: var(--color-foreground);
@@ -292,25 +292,25 @@
 
 /* ── Text gradient ── */
 @utility text-gradient-forest {
-  background: linear-gradient(135deg, #ecf39e 0%, #90a955 50%, #4f772d 100%);
+  background: linear-gradient(135deg, #FFFFFF 0%, #A7A7A7 50%, #1DB954 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 @utility gradient-text {
-  background: linear-gradient(135deg, #ecf39e 0%, #90a955 100%);
+  background: linear-gradient(135deg, #FFFFFF 0%, #1DB954 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 @utility gradient-brand {
-  background: linear-gradient(135deg, #31572c 0%, #4f772d 50%, #90a955 100%);
+  background: linear-gradient(135deg, #1A1A1A 0%, #282828 50%, #1DB954 100%);
 }
 
 @utility shadow-glow {
-  box-shadow: 0 0 20px rgba(144, 169, 85, 0.2);
+  box-shadow: 0 0 20px rgba(29, 185, 84, 0.2);
 }
 
 @utility card-elevated {
