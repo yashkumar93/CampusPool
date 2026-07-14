@@ -87,16 +87,30 @@ export function ProfilePreviewSheet({ userId, open, onOpenChange }: ProfilePrevi
               )}
             </div>
 
+            {/* Safety/Privacy Notice for partial profiles */}
+            {!profile.is_full_profile && (
+              <div className="p-3 bg-primary/10 border border-primary/20 text-xs text-muted-foreground rounded-xl flex items-center gap-2.5">
+                <ShieldCheck className="h-4 w-4 text-primary shrink-0" />
+                <span>Contact details are locked for safety. Send a request to team up or join to unlock phone number and email!</span>
+              </div>
+            )}
+
             {/* Details Grid */}
             <div className="space-y-1">
               <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">Contact & Details</h4>
               <div className="rounded-xl border border-border/30 bg-card overflow-hidden divide-y divide-border/15">
-                {profile.phone && (
+                {profile.phone ? (
                   <ProfileRow icon={Phone} label="Phone" value={profile.phone} />
-                )}
-                {profile.email && (
+                ) : !profile.is_full_profile ? (
+                  <ProfileRow icon={Phone} label="Phone" value="•••••••••• (Locked)" />
+                ) : null}
+                
+                {profile.email ? (
                   <ProfileRow icon={Mail} label="Email" value={profile.email} />
-                )}
+                ) : !profile.is_full_profile ? (
+                  <ProfileRow icon={Mail} label="Email" value="•••••••••••• (Locked)" />
+                ) : null}
+
                 {profile.college && (
                   <ProfileRow icon={Building2} label="College" value={profile.college} />
                 )}

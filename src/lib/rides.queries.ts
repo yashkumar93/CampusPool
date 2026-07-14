@@ -341,13 +341,46 @@ export async function getPublicProfile({ userId }: { userId: string }) {
   if (typeof window === "undefined") return null;
 
   await requireAuth();
-  const { data: profile, error } = await supabase
+  const { data: profile } = await supabase
     .from("profiles")
     .select("id, full_name, email, college, department, year, gender, phone, hostel, avatar_url, verified, bio, rating_avg, rating_count, driving_license")
     .eq("id", userId)
-    .single();
-  if (error) throw new Error(error.message);
-  return profile;
+    .maybeSingle();
+
+  if (profile) {
+    return {
+      ...profile,
+      is_full_profile: true,
+    };
+  }
+
+  const { data: publicProfile, error: publicError } = await supabase
+    .from("profiles_public")
+    .select("id, full_name, college, department, year, avatar_url, verified, rating_avg, rating_count, driving_license")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (publicError) throw new Error(publicError.message);
+  if (!publicProfile) throw new Error("Profile not found");
+
+  return {
+    id: publicProfile.id,
+    full_name: publicProfile.full_name,
+    email: null,
+    college: publicProfile.college,
+    department: publicProfile.department,
+    year: publicProfile.year,
+    gender: null,
+    phone: null,
+    hostel: null,
+    avatar_url: publicProfile.avatar_url,
+    verified: publicProfile.verified,
+    bio: null,
+    rating_avg: publicProfile.rating_avg,
+    rating_count: publicProfile.rating_count,
+    driving_license: publicProfile.driving_license,
+    is_full_profile: false,
+  };
 }
 
 export async function listMyGroups() {
