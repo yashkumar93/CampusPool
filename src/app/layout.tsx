@@ -54,7 +54,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${figtree.variable} ${bricolage.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`dark ${figtree.variable} ${bricolage.variable}`} suppressHydrationWarning>
       <head />
       <body style={{
         ["--font-sans-family" as any]: "var(--font-sans-fallback)",
