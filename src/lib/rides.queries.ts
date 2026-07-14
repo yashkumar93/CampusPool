@@ -17,7 +17,7 @@ export async function listLiveRides() {
   
   // Clean up expired rides on-demand
   try {
-    await supabase.rpc("close_expired_rides");
+    await supabase.rpc("close_expired_rides" as never);
   } catch (err) {
     console.error("Failed to run close_expired_rides:", err);
   }
@@ -28,10 +28,12 @@ export async function listLiveRides() {
   // Fetch classmates' profiles (same college)
   const { data: classmateProfiles } = await supabase
     .from("profiles_public")
-    .select("id, full_name, department, rating_avg, rating_count, avatar_url")
+    .select("id, full_name, department, rating_avg, rating_count, avatar_url, driving_license")
     .eq("college", myProfile.college);
 
-  const classmateIds = (classmateProfiles ?? []).map((p) => p.id).filter(Boolean);
+  const classmateIds = (classmateProfiles ?? [])
+    .map((p) => p.id)
+    .filter((id): id is string => !!id);
   if (!classmateIds.length) return [];
 
   const now = new Date();
@@ -63,7 +65,7 @@ export async function listMyRides() {
 
   // Clean up expired rides on-demand
   try {
-    await supabase.rpc("close_expired_rides");
+    await supabase.rpc("close_expired_rides" as any);
   } catch (err) {
     console.error("Failed to run close_expired_rides:", err);
   }
@@ -147,7 +149,7 @@ export async function findMatches({ rideId }: { rideId: string }) {
 
   const { data: allProfiles } = await supabase
     .from("profiles_public")
-    .select("id, full_name, department, year, rating_avg, rating_count, avatar_url")
+    .select("id, full_name, department, year, rating_avg, rating_count, avatar_url, driving_license")
     .in("id", allCandidateCreatorIds);
 
   const profileMap = new Map((allProfiles ?? []).map((p) => [p.id, p]));
@@ -197,6 +199,49 @@ export async function listIncomingRequests({ rideId }: { rideId: string }) {
 
   const map = new Map((profiles ?? []).map((p) => [p.id, p]));
   return (reqs ?? []).map((r) => ({ ...r, profile: map.get(r.requester_id) ?? null }));
+}
+
+export async function listMyNotifications() {
+  if (typeof window === "undefined") return [];
+
+  const { userId } = await requireAuth();
+
+  // Get all my open/matched rides
+  const { data: myRides } = await supabase
+    .from("rides")
+    .select("id, pickup_label, dest_label")
+    .eq("creator_id", userId)
+    .in("status", ["open", "matched"]);
+
+  if (!myRides || myRides.length === 0) return [];
+
+  const rideIds = myRides.map(r => r.id);
+  const rideMap = new Map(myRides.map(r => [r.id, r]));
+
+  // Get pending join requests for my rides
+  const { data: reqs } = await supabase
+    .from("join_requests")
+    .select("*")
+    .in("target_ride_id", rideIds)
+    .eq("status", "pending")
+    .order("created_at", { ascending: false });
+
+  if (!reqs || reqs.length === 0) return [];
+
+  // Get requester profiles
+  const requesterIds = Array.from(new Set(reqs.map(r => r.requester_id)));
+  const { data: profiles } = await supabase
+    .from("profiles_public")
+    .select("id, full_name, avatar_url")
+    .in("id", requesterIds);
+
+  const profileMap = new Map((profiles ?? []).map(p => [p.id, p]));
+
+  return reqs.map(r => ({
+    ...r,
+    ride: rideMap.get(r.target_ride_id) ?? null,
+    profile: profileMap.get(r.requester_id) ?? null
+  }));
 }
 
 export async function getGroup({ groupId }: { groupId: string }) {
@@ -388,7 +433,9 @@ export async function listMapRadarData(): Promise<{
     .select("id, full_name, department, rating_avg, rating_count, avatar_url, college")
     .eq("college", myProfile.college);
 
-  const classmateIds = (profiles ?? []).map((p) => p.id).filter(Boolean);
+  const classmateIds = (profiles ?? [])
+    .map((p) => p.id)
+    .filter((id): id is string => !!id);
   const profileMap = new Map((profiles ?? []).map((p) => [p.id, p]));
 
   const now = new Date();
@@ -443,7 +490,7 @@ export async function listMapRadarData(): Promise<{
           recorded_at: loc.recorded_at,
           pickup_label: g.pickup_label,
           dest_label: g.dest_label,
-          driver_profile: profileMap.get(g.driver_id) ?? null,
+          driver_profile: (profileMap.get(g.driver_id) as any) ?? null,
         });
       }
     }

@@ -605,7 +605,7 @@ export function AuthForm() {
                         <ShieldCheck className="h-3.5 w-3.5 text-red-500" />
                         {allowedDomains.length > 3
                           ? "Email domain must match your selected organization"
-                          : `Only ${allowedDomains.map((d) => `@${d}`).join(", ")} emails are accepted`}
+                          : `Only ${allowedDomains.map((d: string) => `@${d}`).join(", ")} emails are accepted`}
                       </p>
                     )}
                   </div>

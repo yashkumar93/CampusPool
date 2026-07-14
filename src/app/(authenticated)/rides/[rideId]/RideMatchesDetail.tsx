@@ -7,7 +7,7 @@ import { requestJoin, respondJoinRequest, cancelRide, closeRide } from "@/lib/ri
 import { findMatches, listIncomingRequests, getMyProfile } from "@/lib/rides.queries";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, ArrowRight, ArrowLeft, Star, Users, Clock, Sparkles, Inbox, Check, X, Navigation2, Car, RefreshCw } from "lucide-react";
+import { MapPin, ArrowRight, ArrowLeft, Star, Users, Clock, Sparkles, Inbox, Check, X, Navigation2, Car, RefreshCw, IdCard } from "lucide-react";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -93,7 +93,7 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
   });
   const currentUserId = profile?.id;
 
-  const isMine = !!data && !!currentUserId && data.mine.creator_id === currentUserId;
+  const isMine = !!data && !!data.mine && !!currentUserId && data.mine.creator_id === currentUserId;
   const { data: incoming } = useQuery({
     queryKey: ["incoming-requests", rideId],
     queryFn: () => listIncomingRequests({ rideId }),
@@ -142,7 +142,7 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
   });
 
   useEffect(() => {
-    if (!data) return;
+    if (!data || !data.mine) return;
     const isDriver = data.mine.role === "driver";
     const channel = supabase
       .channel(`ride-${rideId}`)
@@ -484,6 +484,11 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
                                 {(m.profile.rating_count ?? 0) > 0 && (
                                   <span className="inline-flex items-center gap-0.5">
                                     · <Star className="h-3 w-3 fill-primary text-primary" /> {Number(m.profile.rating_avg).toFixed(1)}
+                                  </span>
+                                )}
+                                {m.profile.driving_license && (
+                                  <span className="inline-flex items-center gap-0.5 text-[#1DB954] ml-1">
+                                    · <IdCard className="h-3 w-3 ml-0.5" /> License
                                   </span>
                                 )}
                               </span>

@@ -34,6 +34,7 @@ export default function ProfilePage() {
   const [hostel, setHostel] = useState("");
   const [gender, setGender] = useState<string>("");
   const [bio, setBio] = useState("");
+  const [drivingLicense, setDrivingLicense] = useState("");
 
   useEffect(() => {
     if (!profile) return;
@@ -44,6 +45,7 @@ export default function ProfilePage() {
     setHostel(profile.hostel ?? "");
     setGender(profile.gender ?? "");
     setBio(profile.bio ?? "");
+    setDrivingLicense(profile.driving_license ?? "");
   }, [profile]);
 
   const mutation = useMutation({
@@ -56,6 +58,7 @@ export default function ProfilePage() {
         hostel: hostel || null,
         gender: gender as "male" | "female" | "other" | "prefer_not_to_say" || null,
         bio: bio || null,
+        driving_license: drivingLicense || null,
       }),
     onSuccess: () => {
       toast.success("Profile updated");
@@ -179,6 +182,21 @@ export default function ProfilePage() {
               rows={3}
             />
             <p className="text-[11px] text-muted-foreground">{bio.length}/300 characters</p>
+          </div>
+        </div>
+
+        {/* Driver Information */}
+        <div className="surface-card p-5 space-y-4">
+          <h2 className="text-sm font-semibold tracking-wide uppercase text-muted-foreground">Driver Information</h2>
+          <div className="space-y-1.5">
+            <Label htmlFor="drivingLicense">Driving License Number</Label>
+            <Input 
+              id="drivingLicense" 
+              value={drivingLicense} 
+              onChange={(e) => setDrivingLicense(e.target.value)} 
+              placeholder="DL-1420110012345" 
+            />
+            <p className="text-[11px] text-muted-foreground">If you plan to offer rides as a driver, please provide your driving license to verify your driving eligibility.</p>
           </div>
         </div>
 

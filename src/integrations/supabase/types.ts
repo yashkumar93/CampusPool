@@ -151,6 +151,7 @@ export type Database = {
           updated_at: string
           verified: boolean
           year: string | null
+          driving_license: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -169,6 +170,7 @@ export type Database = {
           updated_at?: string
           verified?: boolean
           year?: string | null
+          driving_license?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -187,6 +189,7 @@ export type Database = {
           updated_at?: string
           verified?: boolean
           year?: string | null
+          driving_license?: string | null
         }
         Relationships: []
       }
@@ -495,6 +498,7 @@ export type Database = {
           rating_count: number | null
           verified: boolean | null
           year: string | null
+          driving_license: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -506,6 +510,7 @@ export type Database = {
           rating_count?: number | null
           verified?: boolean | null
           year?: string | null
+          driving_license?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -517,6 +522,7 @@ export type Database = {
           rating_count?: number | null
           verified?: boolean | null
           year?: string | null
+          driving_license?: string | null
         }
         Relationships: []
       }

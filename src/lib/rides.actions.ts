@@ -502,6 +502,7 @@ const UpdateProfileInput = z.object({
   phone: z.string().max(20).nullable().optional(),
   hostel: z.string().max(80).nullable().optional(),
   bio: z.string().max(300).nullable().optional(),
+  driving_license: z.string().max(50).nullable().optional(),
 });
 
 export async function updateMyProfile(rawInput: unknown) {
