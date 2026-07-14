@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { TripMap } from "@/components/TripMap";
+import { ProfilePreviewSheet } from "@/components/ProfilePreviewSheet";
 import {
   Dialog,
   DialogContent,
@@ -71,6 +72,7 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
   const router = useRouter();
   const qc = useQueryClient();
   const [confirmAction, setConfirmAction] = useState<"cancel" | "close" | null>(null);
+  const [previewUserId, setPreviewUserId] = useState<string | null>(null);
 
   const { data, isLoading, refetch, isRefetching } = useQuery({
     queryKey: ["matches", rideId],
@@ -301,7 +303,14 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 text-sm">
-                        <span className="font-medium">{r.profile?.full_name ?? "Student"}</span>
+                        <button
+                          type="button"
+                          className="font-medium hover:underline hover:text-primary transition-colors cursor-pointer text-left"
+                          onClick={() => setPreviewUserId(r.requester_id)}
+                          title="View full profile"
+                        >
+                          {r.profile?.full_name ?? "Student"}
+                        </button>
                         {r.profile?.department && (
                           <span className="text-xs text-muted-foreground">· {r.profile.department}</span>
                         )}
@@ -478,8 +487,13 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
                           <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
                             <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" /> {fmt(m.ride.depart_at)}</span>
                             {m.profile && (
-                              <span className="inline-flex items-center gap-1">
-                                <span className="font-medium text-foreground">{m.profile.full_name}</span>
+                              <button
+                                type="button"
+                                className="inline-flex items-center gap-1 hover:underline cursor-pointer transition-colors"
+                                onClick={(e) => { e.stopPropagation(); setPreviewUserId(m.ride.creator_id); }}
+                                title="View full profile"
+                              >
+                                <span className="font-medium text-foreground hover:text-primary transition-colors">{m.profile.full_name}</span>
                                 {m.profile.department && <span>· {m.profile.department}</span>}
                                 {(m.profile.rating_count ?? 0) > 0 && (
                                   <span className="inline-flex items-center gap-0.5">
@@ -491,7 +505,7 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
                                     · <IdCard className="h-3 w-3 ml-0.5" /> License
                                   </span>
                                 )}
-                              </span>
+                              </button>
                             )}
                           </div>
                           {m.matchReason && (
@@ -559,6 +573,14 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <ProfilePreviewSheet
+        userId={previewUserId}
+        open={!!previewUserId}
+        onOpenChange={(open) => {
+          if (!open) setPreviewUserId(null);
+        }}
+      />
     </div>
   );
 }

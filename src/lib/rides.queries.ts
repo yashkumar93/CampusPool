@@ -337,6 +337,19 @@ export async function getMyProfile() {
   return profile;
 }
 
+export async function getPublicProfile({ userId }: { userId: string }) {
+  if (typeof window === "undefined") return null;
+
+  await requireAuth();
+  const { data: profile, error } = await supabase
+    .from("profiles")
+    .select("id, full_name, email, college, department, year, gender, phone, hostel, avatar_url, verified, bio, rating_avg, rating_count, driving_license")
+    .eq("id", userId)
+    .single();
+  if (error) throw new Error(error.message);
+  return profile;
+}
+
 export async function listMyGroups() {
   if (typeof window === "undefined") return [];
 
