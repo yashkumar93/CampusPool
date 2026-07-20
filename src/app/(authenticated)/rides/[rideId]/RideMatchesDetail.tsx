@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { TripMap } from "@/components/TripMap";
 import { ProfilePreviewSheet } from "@/components/ProfilePreviewSheet";
+import { RideConfirmedOverlay } from "@/components/RideConfirmedOverlay";
 import {
   Dialog,
   DialogContent,
@@ -74,6 +75,19 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
   const [confirmAction, setConfirmAction] = useState<"cancel" | "close" | null>(null);
   const [previewUserId, setPreviewUserId] = useState<string | null>(null);
 
+  const [overlayState, setOverlayState] = useState<{
+    isOpen: boolean;
+    groupId?: string | null;
+    participants: { name: string; role: string; avatarUrl?: string }[];
+    title: string;
+    subtitle: string;
+  }>({
+    isOpen: false,
+    participants: [],
+    title: "",
+    subtitle: "",
+  });
+
   const { data, isLoading, refetch, isRefetching } = useQuery({
     queryKey: ["matches", rideId],
     queryFn: () => findMatches({ rideId }),
@@ -81,8 +95,20 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
 
   const requestMut = useMutation({
     mutationFn: (targetRideId: string) => requestJoin({ targetRideId }),
-    onSuccess: () => {
-      toast.success("Request sent — waiting for driver");
+    onSuccess: (_, targetRideId) => {
+      const targetRide = targetRideId === data?.mine?.id ? data?.mine : data?.matches?.find(m => m.ride.id === targetRideId)?.ride;
+      
+      setOverlayState({
+        isOpen: true,
+        groupId: null,
+        title: "Request Sent!",
+        subtitle: "Waiting for host to accept your request.",
+        participants: [
+          { name: profile?.full_name || "You", role: "Requester" },
+          { name: (targetRide as any)?.creator_profile?.full_name || "Host", role: "Host" }
+        ]
+      });
+
       qc.invalidateQueries({ queryKey: ["matches", rideId] });
       qc.invalidateQueries({ queryKey: ["my-requests"] });
     },
@@ -108,12 +134,26 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
       setRespondingId(v.requestId);
       return respondJoinRequest(v);
     },
-    onSuccess: (res) => {
+    onSuccess: (res, variables) => {
       setRespondingId(null);
-      toast.success(res.groupId ? "Passenger accepted" : "Request updated");
       qc.invalidateQueries({ queryKey: ["incoming-requests", rideId] });
       qc.invalidateQueries({ queryKey: ["my-groups"] });
-      if (res.groupId) router.push(`/groups/${res.groupId}`);
+      
+      if (res.groupId && variables.accept) {
+        const req = incoming?.find((r: any) => r.id === variables.requestId);
+        setOverlayState({
+          isOpen: true,
+          groupId: res.groupId,
+          title: "Ride Confirmed!",
+          subtitle: "You are teamed up with:",
+          participants: [
+            { name: profile?.full_name || "You", role: "Host" },
+            { name: req?.profile?.full_name || "Passenger", role: "Passenger" }
+          ]
+        });
+      } else if (!variables.accept) {
+        toast.success("Request declined");
+      }
     },
     onError: (e) => {
       setRespondingId(null);
@@ -577,9 +617,16 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
       <ProfilePreviewSheet
         userId={previewUserId}
         open={!!previewUserId}
-        onOpenChange={(open) => {
-          if (!open) setPreviewUserId(null);
-        }}
+        onOpenChange={(open: boolean) => !open && setPreviewUserId(null)}
+      />
+        
+      <RideConfirmedOverlay 
+        isOpen={overlayState.isOpen}
+        groupId={overlayState.groupId}
+        participants={overlayState.participants}
+        title={overlayState.title}
+        subtitle={overlayState.subtitle}
+        onClose={() => setOverlayState(prev => ({ ...prev, isOpen: false }))}
       />
     </div>
   );
