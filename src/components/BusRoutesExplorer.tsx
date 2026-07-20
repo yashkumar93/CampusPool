@@ -173,7 +173,7 @@ export function BusRoutesExplorer() {
           map: mapRef.current,
           suppressMarkers: false,
           polylineOptions: {
-            strokeColor: "#1DB954",
+            strokeColor: "#c1fbd4",
             strokeWeight: 5,
             strokeOpacity: 0.9,
           },
@@ -401,7 +401,7 @@ export function BusRoutesExplorer() {
         className="grid grid-cols-1 md:grid-cols-12 gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-xl backdrop-blur-md"
       >
         <div className="md:col-span-5 relative">
-          <span className="absolute left-3.5 top-3.5 text-xs font-bold text-[#1DB954] flex items-center gap-1">
+          <span className="absolute left-3.5 top-3.5 text-xs font-bold text-aloe-text flex items-center gap-1">
             <Building2 className="h-4 w-4" /> From
           </span>
           <Input
@@ -409,14 +409,14 @@ export function BusRoutesExplorer() {
             value={origin}
             onChange={(e) => setOrigin(e.target.value)}
             placeholder="Origin point or use GPS..."
-            className="pl-20 pr-11 h-11 bg-background/80 border-border/40 font-medium text-sm rounded-xl focus:border-primary"
+            className="pl-20 pr-11 h-11 bg-background/80 border-border font-medium text-sm rounded-xl focus:border-primary"
           />
           <button
             type="button"
             onClick={handleUseMyLocation}
             disabled={locating}
             title="Use My Current GPS Location"
-            className="absolute right-2.5 top-2.5 rounded-lg p-1.5 text-blue-400 hover:bg-blue-500/10 transition-colors disabled:opacity-50"
+            className="absolute right-2.5 top-2.5 rounded-lg p-1.5 text-aloe-text hover:bg-blue-500/10 transition-colors disabled:opacity-50"
           >
             <LocateFixed className={`h-4 w-4 ${locating ? "animate-spin text-primary" : ""}`} />
           </button>
@@ -431,7 +431,7 @@ export function BusRoutesExplorer() {
             value={destination}
             onChange={(e) => setDestination(e.target.value)}
             placeholder="Enter destination bus station or city..."
-            className="pl-16 pr-4 h-11 bg-background/80 border-border/40 font-medium text-sm rounded-xl focus:border-cyan-400"
+            className="pl-16 pr-4 h-11 bg-background/80 border-border font-medium text-sm rounded-xl focus:border-cyan-400"
           />
         </div>
 
@@ -439,7 +439,7 @@ export function BusRoutesExplorer() {
           <Button
             type="submit"
             disabled={loading}
-            className="h-11 w-full gap-2 rounded-xl bg-[#1DB954] font-bold text-black hover:bg-[#1DB954]/90 shadow-lg shadow-[#1DB954]/20"
+            className="h-11 w-full gap-2 rounded-full bg-[#c1fbd4] font-medium text-black hover:bg-[#a8f0be] shadow-lg shadow-[#c1fbd4]/20"
           >
             {loading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
             Find Buses
@@ -450,14 +450,14 @@ export function BusRoutesExplorer() {
       {/* Main Map & Itinerary Results Split Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 min-h-[560px]">
         {/* Left Side: Live Google Transit Map */}
-        <div className="lg:col-span-7 flex flex-col rounded-2xl border border-border/40 bg-[#0d110e] overflow-hidden shadow-xl">
-          <div className="flex items-center justify-between px-4 py-3 bg-[#0a0f0b] border-b border-white/5">
+        <div className="lg:col-span-7 flex flex-col rounded-2xl border border-border bg-[#0d110e] overflow-hidden shadow-xl">
+          <div className="flex items-center justify-between px-4 py-3 bg-black border-b border-white/5">
             <div className="flex items-center gap-2 text-xs font-bold text-foreground">
-              <Bus className="h-4 w-4 text-[#1DB954]" />
+              <Bus className="h-4 w-4 text-aloe-text" />
               <span>Google Maps Live Route Visualization</span>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="text-[10px] bg-[#1DB954]/10 text-[#1DB954] border-[#1DB954]/30 font-bold">
+              <Badge variant="outline" className="text-[10px] bg-[#c1fbd4]/10 text-aloe-text border-[#c1fbd4]/30 font-bold">
                 ● Live Transit Feed
               </Badge>
             </div>
@@ -467,7 +467,7 @@ export function BusRoutesExplorer() {
 
         {/* Right Side: Itinerary List & Step-by-Step Breakdown */}
         <div className="lg:col-span-5 flex flex-col space-y-4">
-          <div className="flex items-center justify-between bg-card border border-border/40 rounded-xl px-4 py-3">
+          <div className="flex items-center justify-between bg-card border border-border rounded-xl px-4 py-3">
             <div>
               <h3 className="text-sm font-bold text-foreground">Available Transit Options</h3>
               <p className="text-[11px] text-muted-foreground">Select a route option to highlight on map</p>
@@ -478,7 +478,7 @@ export function BusRoutesExplorer() {
           </div>
 
           {loading && (
-            <div className="flex flex-1 flex-col items-center justify-center rounded-xl border border-border/40 bg-card p-8 text-center">
+            <div className="flex flex-1 flex-col items-center justify-center rounded-xl border border-border bg-card p-8 text-center">
               <RefreshCw className="h-8 w-8 animate-spin text-primary mb-3" />
               <p className="font-bold text-sm text-foreground">Querying Google Maps Transit API...</p>
               <p className="text-xs text-muted-foreground mt-1">Checking live bus schedules, stops, and transfers</p>
@@ -486,7 +486,7 @@ export function BusRoutesExplorer() {
           )}
 
           {!loading && error && (
-            <div className="flex flex-1 flex-col items-center justify-center rounded-xl border border-border/40 bg-card p-6 text-center">
+            <div className="flex flex-1 flex-col items-center justify-center rounded-xl border border-border bg-card p-6 text-center">
               <AlertCircle className="h-8 w-8 text-destructive mb-3" />
               <p className="font-bold text-sm text-foreground">Route Lookup Issue</p>
               <p className="text-xs text-muted-foreground mt-1">{error}</p>
@@ -494,7 +494,7 @@ export function BusRoutesExplorer() {
           )}
 
           {!loading && !error && itineraries.length === 0 && (
-            <div className="flex flex-1 flex-col items-center justify-center rounded-xl border border-border/40 bg-card p-6 text-center">
+            <div className="flex flex-1 flex-col items-center justify-center rounded-xl border border-border bg-card p-6 text-center">
               <Bus className="h-8 w-8 text-muted-foreground mb-3" />
               <p className="font-bold text-sm text-foreground">Enter Pickup & Destination</p>
               <p className="text-xs text-muted-foreground mt-1">Type or use GPS above to discover live bus routes, timings, and ticket prices.</p>
@@ -512,8 +512,8 @@ export function BusRoutesExplorer() {
                     key={itin.id}
                     className={`rounded-xl border transition-all ${
                       isSelected
-                        ? "border-[#1DB954] bg-card/90 shadow-md shadow-[#1DB954]/10"
-                        : "border-border/40 bg-card/60 hover:border-border hover:bg-card"
+                        ? "border-[#c1fbd4] bg-card/90 shadow-md shadow-[#c1fbd4]/10"
+                        : "border-border bg-card/60 hover:border-border hover:bg-card"
                     }`}
                   >
                     {/* Header bar */}
@@ -522,7 +522,7 @@ export function BusRoutesExplorer() {
                       className="cursor-pointer p-4 flex items-start justify-between gap-3"
                     >
                       <div className="flex items-start gap-3">
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#1DB954]/15 text-[#1DB954]">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#c1fbd4]/15 text-aloe-text">
                           <Bus className="h-5 w-5" />
                         </div>
                         <div>
@@ -539,7 +539,7 @@ export function BusRoutesExplorer() {
                               <Clock className="h-3.5 w-3.5 text-primary" /> {itin.duration}
                             </span>
                             <span>({itin.distance})</span>
-                            <span className="text-emerald-400 font-semibold">
+                            <span className="text-aloe-text font-semibold">
                               Depart {itin.departureTime}
                             </span>
                           </div>
@@ -566,10 +566,10 @@ export function BusRoutesExplorer() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 rounded-xl bg-white/5 p-3.5 border border-white/10 text-xs shadow-inner">
                           <div>
                             <span className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground flex items-center gap-1">
-                              <Clock className="h-3.5 w-3.5 text-emerald-400" /> Schedule & Timings
+                              <Clock className="h-3.5 w-3.5 text-aloe-text" /> Schedule & Timings
                             </span>
                             <div className="mt-1.5 font-bold text-foreground text-sm">
-                              Departs: <span className="text-emerald-400 font-extrabold">{itin.departureTime}</span>
+                              Departs: <span className="text-aloe-text font-extrabold">{itin.departureTime}</span>
                             </div>
                             <div className="text-xs text-muted-foreground mt-0.5">
                               Arrives: <span className="text-foreground font-semibold">{itin.arrivalTime}</span> ({itin.duration})
@@ -593,14 +593,14 @@ export function BusRoutesExplorer() {
                             <Layers className="h-3 w-3 text-primary" /> Step-by-Step Transit Instructions
                           </h5>
 
-                        <div className="space-y-3 pl-2 border-l-2 border-[#1DB954]/40">
+                        <div className="space-y-3 pl-2 border-l-2 border-[#c1fbd4]/40">
                           {itin.steps.map((step, sIdx) => {
                             const isBus = step.mode === "BUS";
                             return (
                               <div key={sIdx} className="relative pl-4 text-xs">
                                 <span
                                   className={`absolute -left-[21px] top-0.5 flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold ${
-                                    isBus ? "bg-[#1DB954] text-black" : "bg-muted text-muted-foreground border border-white/20"
+                                    isBus ? "bg-[#c1fbd4] text-black" : "bg-muted text-muted-foreground border border-white/20"
                                   }`}
                                 >
                                   {isBus ? "🚌" : "🚶"}
@@ -612,14 +612,14 @@ export function BusRoutesExplorer() {
 
                                 {isBus && (
                                   <div className="mt-1 flex flex-wrap items-center gap-2 rounded-lg bg-white/5 p-2 text-[11px] border border-white/5">
-                                    <span className="font-bold text-[#1DB954]">
+                                    <span className="font-bold text-aloe-text">
                                       {step.lineName}
                                     </span>
                                     {step.agency && (
                                       <span className="text-muted-foreground">| Agency: {step.agency}</span>
                                     )}
                                     {step.numStops && (
-                                      <span className="rounded bg-black/40 px-1.5 py-0.5 font-bold text-white/80">
+                                      <span className="rounded bg-black/40 px-1.5 py-0.5 font-bold text-foreground/80">
                                         {step.numStops} stops
                                       </span>
                                     )}

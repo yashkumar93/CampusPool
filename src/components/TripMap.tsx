@@ -427,7 +427,7 @@ export function TripMap({ pickup, destination, waypoints, polyline, driver, clas
                 </div>
                 <div
                   dangerouslySetInnerHTML={{ __html: upcomingStep.instructions }}
-                  className="text-xs font-medium text-white truncate [&>b]:font-semibold"
+                  className="text-xs font-medium text-foreground truncate [&>b]:font-semibold"
                 />
                 <div className="text-[10px] text-muted-foreground mt-0.5">
                   {upcomingStep.distanceTo > 1000
@@ -501,7 +501,7 @@ export function TripMap({ pickup, destination, waypoints, polyline, driver, clas
           </h3>
           <div className="max-h-60 overflow-y-auto space-y-3 pr-2 scrollbar-thin scrollbar-thumb-muted">
             {textDirections.map((step, idx) => (
-              <div key={idx} className="flex gap-3 text-xs border-b border-border/40 pb-2.5 last:border-0 last:pb-0">
+              <div key={idx} className="flex gap-3 text-xs border-b border-border pb-2.5 last:border-0 last:pb-0">
                 <span className="text-muted-foreground font-semibold min-w-[20px]">{idx + 1}.</span>
                 <div className="flex-1">
                   <div

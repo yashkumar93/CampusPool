@@ -500,7 +500,7 @@ export function GroupDetail({ groupId }: { groupId: string }) {
               <li key={m.id} className="text-sm">
                 <div className="flex items-center gap-3">
                   <div className={cn(
-                    "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white",
+                    "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-foreground",
                     avatarColor(m.user_id),
                   )}>
                     {getInitials(m.profile?.full_name ?? "??")}

@@ -6,8 +6,12 @@ import { NotificationsDropdown } from "./NotificationsDropdown";
 const pageTitles: Record<string, string> = {
   "/home": "Dashboard",
   "/rides/new": "Rides",
+  "/rides/": "Ride Details",
   "/profile": "Profile",
   "/analytics": "Analytics",
+  "/bus-routes": "Bus Routes",
+  "/map": "Map",
+  "/groups/": "Group Chat",
 };
 
 export function DashboardTopBar() {
@@ -19,12 +23,12 @@ export function DashboardTopBar() {
     )?.[1] ?? "Dashboard";
 
   return (
-    <header className="sticky top-0 z-20 h-14 border-b border-border/40 bg-background/90 backdrop-blur flex items-center justify-between px-6">
-      <h2 className="text-sm font-bold text-foreground">{title}</h2>
+    <header className="sticky top-0 z-20 h-14 border-b border-[#1e2c31]/60 bg-black/80 backdrop-blur-xl flex items-center justify-between px-6">
+      <h2 className="text-[13px] font-medium text-[#d4d4d8] tracking-wide">{title}</h2>
 
       <div className="flex items-center gap-3">
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-[#1DB954]/40 bg-[#1DB954]/10 px-3 py-1 text-[10px] font-bold text-[#1DB954] uppercase tracking-wider">
-          ✓ Verified Student
+        <span className="pill-tag-aloe uppercase tracking-wider">
+          ✓ Verified
         </span>
 
         <NotificationsDropdown />

@@ -39,7 +39,7 @@ function RideMatchesSkeleton() {
       <div className="h-[45vh] shimmer" />
       <div className="relative z-10 -mt-6 rounded-t-3xl border-t border-border bg-background px-4 pb-24 pt-4 md:px-6">
         <div className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-muted" />
-        <div className="surface-card mb-4 p-3 space-y-3">
+        <div className="bg-card border border-border rounded-xl mb-4 p-3 space-y-3">
           <div className="flex gap-3">
             <div className="h-8 w-8 rounded-full shimmer" />
             <div className="flex-1 space-y-2">
@@ -51,7 +51,7 @@ function RideMatchesSkeleton() {
         <div className="mb-3 h-6 w-40 rounded shimmer" />
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="surface-card p-4">
+            <div key={i} className="bg-card border border-border rounded-xl p-4">
               <div className="flex justify-between mb-2">
                 <div className="flex gap-2">
                   <div className="h-5 w-20 rounded shimmer" />
@@ -237,7 +237,6 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
 
   return (
     <div className="-mx-4 -mt-4 md:-mx-6 md:-mt-6">
-      {/* Uber-style map hero */}
       <div className="relative">
         <TripMap
           pickup={pickup}
@@ -255,16 +254,16 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
         <div className="pointer-events-none absolute inset-x-3 top-3 flex items-start justify-between gap-2">
           <div className="flex items-center gap-2">
             <Link href="/home" className="pointer-events-auto">
-              <Button size="icon" variant="secondary" className="shadow-lg h-8 w-8">
+              <Button size="icon" variant="secondary" className="h-8 w-8 rounded-full">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             </Link>
-            <div className="surface-card pointer-events-auto flex max-w-[65%] items-center gap-2 px-3 py-2 shadow-lg backdrop-blur">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+            <div className="bg-card border border-border rounded-xl pointer-events-auto flex max-w-[65%] items-center gap-2 px-3 py-2 backdrop-blur">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#c1fbd4]/15 text-aloe-text">
                 {isDriverOffer ? <Car className="h-4 w-4" /> : <Navigation2 className="h-4 w-4" />}
               </div>
               <div className="min-w-0">
-                <div className="text-[10px] uppercase tracking-widest text-primary">
+                <div className="text-[10px] uppercase tracking-widest text-aloe-text">
                   {isDriverOffer ? "Offering ride" : "Requesting ride"}
                 </div>
                 <div className="truncate text-sm font-medium">{mine.pickup_label} → {mine.dest_label}</div>
@@ -274,7 +273,7 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
           <Button
             size="icon"
             variant="secondary"
-            className="pointer-events-auto shadow-lg"
+            className="pointer-events-auto rounded-full"
             onClick={() => refetch()}
             disabled={isRefetching}
             aria-label="Refresh"
@@ -284,16 +283,14 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
         </div>
       </div>
 
-      {/* Bottom sheet */}
-      <div className="relative z-10 -mt-6 rounded-t-3xl border-t border-border bg-background px-4 pb-24 pt-4 shadow-[0_-8px_24px_-12px_rgba(0,0,0,0.15)] md:px-6">
+      <div className="relative z-10 -mt-6 rounded-t-3xl border-t border-border bg-background px-4 pb-24 pt-4 md:px-6">
         <div className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-muted" />
 
-        {/* Trip summary strip */}
-        <div className="surface-card mb-4 p-3">
+        <div className="bg-card border border-border rounded-xl mb-4 p-3">
           <div className="flex items-start gap-3">
             <div className="mt-1 flex flex-col items-center gap-1">
-              <div className="h-2.5 w-2.5 rounded-full bg-primary" />
-              <div className="h-6 w-px bg-border" />
+              <div className="h-2.5 w-2.5 rounded-full bg-[#c1fbd4]" />
+              <div className="h-6 w-px bg-[#1e2c31]" />
               <div className="h-2.5 w-2.5 rounded-sm bg-foreground" />
             </div>
             <div className="min-w-0 flex-1 space-y-1.5 text-sm">
@@ -304,17 +301,16 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
           <div className="mt-3 flex flex-wrap gap-3 border-t border-border pt-3 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {fmt(mine.depart_at)} · ±{mine.flex_minutes}m</span>
             <span className="inline-flex items-center gap-1"><Users className="h-3.5 w-3.5" /> {mine.seats} seat{mine.seats > 1 ? "s" : ""}</span>
-            <Badge variant="outline" className="ml-auto capitalize">{mine.status}</Badge>
+            <Badge variant="outline" className="ml-auto capitalize rounded-full">{mine.status}</Badge>
           </div>
         </div>
 
-        {/* Ride management actions */}
         {isMine && (mine.status === "open" || mine.status === "matched") && (
           <div className="flex gap-2 mb-4">
             <Button
               variant="outline"
               size="sm"
-              className="flex-1 text-destructive hover:bg-destructive/10 border-destructive/20 gap-1.5"
+              className="flex-1 rounded-full text-destructive hover:bg-destructive/10 border-destructive/20 gap-1.5"
               onClick={() => setConfirmAction("cancel")}
               disabled={cancelMut.isPending || closeMut.isPending}
             >
@@ -323,7 +319,7 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
             <Button
               variant="outline"
               size="sm"
-              className="flex-1 gap-1.5"
+              className="flex-1 rounded-full gap-1.5"
               onClick={() => setConfirmAction("close")}
               disabled={cancelMut.isPending || closeMut.isPending}
             >
@@ -334,18 +330,18 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
 
         {isMine && incoming && incoming.length > 0 && (
           <section className="mb-4">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              <Inbox className="h-4 w-4 text-primary" /> Join requests
+            <h2 className="text-lg font-medium flex items-center gap-2">
+              <Inbox className="h-4 w-4 text-aloe-text" /> Join requests
             </h2>
             <ul className="mt-3 space-y-3">
               {incoming.map((r) => (
-                <li key={r.id} className="surface-card p-4">
+                <li key={r.id} className="bg-card border border-border rounded-xl p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 text-sm">
                         <button
                           type="button"
-                          className="font-medium hover:underline hover:text-primary transition-colors cursor-pointer text-left"
+                          className="font-medium hover:underline hover:text-aloe-text transition-colors cursor-pointer text-left"
                           onClick={() => setPreviewUserId(r.requester_id)}
                           title="View full profile"
                         >
@@ -354,7 +350,7 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
                         {r.profile?.department && (
                           <span className="text-xs text-muted-foreground">· {r.profile.department}</span>
                         )}
-                        <Badge variant="outline" className="ml-auto capitalize">{r.status}</Badge>
+                        <Badge variant="outline" className="ml-auto capitalize rounded-full">{r.status}</Badge>
                       </div>
                       {r.pickup_label && (
                         <div className="mt-1 text-xs text-muted-foreground">
@@ -369,7 +365,7 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
                       <div className="flex gap-1.5">
                         <Button
                           size="sm"
-                          className="gap-1"
+                          className="gap-1 rounded-full"
                           onClick={() => respondMut.mutate({ requestId: r.id, accept: true })}
                           disabled={respondMut.isPending && respondingId === r.id}
                         >
@@ -378,7 +374,7 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="gap-1"
+                          className="gap-1 rounded-full"
                           onClick={() => respondMut.mutate({ requestId: r.id, accept: false })}
                           disabled={respondMut.isPending && respondingId === r.id}
                         >
@@ -395,18 +391,18 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
 
         {!isMine ? (
           <section className="mt-6">
-            <h2 className="text-lg font-bold text-white mb-3">Host Information</h2>
-            <div className="bg-[#1a221b] border-2 border-border/40 rounded-xl p-5 space-y-4">
+            <h2 className="text-lg font-medium text-foreground mb-3">Host Information</h2>
+            <div className="bg-card border border-border rounded-xl p-5 space-y-4">
               {(mine as any).creator_profile ? (
                 <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-secondary/20 text-[#b7c6c2] text-sm font-bold border border-secondary/30">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#c1fbd4]/10 text-aloe-text text-sm font-medium border border-border">
                     {((mine as any).creator_profile.full_name ?? "Student").split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase()}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-base font-bold flex items-center gap-1.5 text-white">
+                    <div className="text-base font-medium flex items-center gap-1.5 text-foreground">
                       <span>{(mine as any).creator_profile.full_name}</span>
                       {(mine as any).creator_profile.verified && (
-                        <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#1DB954]/15 text-[#1DB954] text-[10px] font-bold">
+                        <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#c1fbd4]/15 text-aloe-text text-[10px] font-bold">
                           ✓
                         </span>
                       )}
@@ -416,8 +412,8 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
                     </div>
                   </div>
                   {((mine as any).creator_profile.rating_count ?? 0) > 0 && (
-                    <div className="flex items-center gap-1 bg-white/5 border border-white/10 px-2 py-1 rounded text-xs font-bold text-[#ffe17c]">
-                      <Star className="h-3.5 w-3.5 fill-[#ffe17c]" /> {Number((mine as any).creator_profile.rating_avg).toFixed(1)}
+                     <div className="flex items-center gap-1 bg-white/5 border border-white/[0.06] px-2 py-1 rounded-full text-xs font-medium text-aloe-text">
+                       <Star className="h-3.5 w-3.5 fill-[#c1fbd4]" /> {Number((mine as any).creator_profile.rating_avg).toFixed(1)}
                     </div>
                   )}
                 </div>
@@ -425,20 +421,20 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
                 <div className="text-xs text-muted-foreground">Host profile details loading...</div>
               )}
 
-              <div className="border-t border-border/20 pt-4 flex flex-col gap-3">
+              <div className="border-t border-border pt-4 flex flex-col gap-3">
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-muted-foreground font-bold">ESTIMATED COST SPLIT</span>
-                  <span className="font-bold text-white text-sm">
+                   <span className="text-muted-foreground font-medium">ESTIMATED COST SPLIT</span>
+                   <span className="font-medium text-foreground text-sm">
                     {mine.estimated_cost ? `₹${mine.estimated_cost}` : "Auto Split"}
                   </span>
                 </div>
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-muted-foreground font-bold">VEHICLE TYPE</span>
-                  <span className="font-bold text-white capitalize">{mine.vehicle_type}</span>
+                   <span className="text-muted-foreground font-medium">VEHICLE TYPE</span>
+                   <span className="font-medium text-foreground capitalize">{mine.vehicle_type}</span>
                 </div>
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-muted-foreground font-bold">AVAILABLE SEATS</span>
-                  <span className="font-bold text-[#ffe17c]">{mine.seats} seats</span>
+                   <span className="text-muted-foreground font-medium">AVAILABLE SEATS</span>
+                   <span className="font-medium text-aloe-text">{mine.seats} seats</span>
                 </div>
               </div>
 
@@ -446,20 +442,20 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
                 {(mine as any).my_request ? (
                   <div className="text-center">
                     {(mine as any).my_request.status === "pending" && (
-                      <Button className="w-full h-11 btn-neo-secondary font-bold" disabled>
+                       <Button className="w-full h-11 rounded-full bg-card border border-border text-[#a1a1aa] font-medium" disabled>
                         Request Pending Approval
                       </Button>
                     )}
                     {(mine as any).my_request.status === "accepted" && (
-                      <Button 
-                        className="w-full h-11 btn-neo-primary font-bold" 
+                       <Button 
+                        className="w-full h-11 rounded-full bg-[#c1fbd4] text-black hover:bg-[#d4f9e0] font-medium" 
                         onClick={() => router.push(`/groups/${(mine as any).my_request.group_id}`)}
                       >
                         Request Accepted! Open Group Chat
                       </Button>
                     )}
                     {(mine as any).my_request.status === "declined" && (
-                      <Button className="w-full h-11 bg-red-900/30 border border-red-500/20 text-red-400 font-bold" disabled>
+                       <Button className="w-full h-11 rounded-full bg-red-900/30 border border-red-500/20 text-red-400 font-medium" disabled>
                         Request Declined
                       </Button>
                     )}
@@ -469,7 +465,7 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
                     type="button"
                     onClick={() => requestMut.mutate(mine.id)}
                     disabled={requestMut.isPending}
-                    className="w-full h-11 btn-neo-primary font-bold flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="w-full h-11 rounded-full bg-[#c1fbd4] text-black hover:bg-[#d4f9e0] font-medium flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
                   >
                     {requestMut.isPending ? "Sending Request..." : isDriverOffer ? "Request to Join Ride" : "Offer to Team Up"}
                   </button>
@@ -480,13 +476,13 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
         ) : (
           <>
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-semibold flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-primary" /> {data.matches.length} nearby {data.matches.length === 1 ? "match" : "matches"}
+              <h2 className="text-lg font-medium flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-aloe-text" /> {data.matches.length} nearby {data.matches.length === 1 ? "match" : "matches"}
               </h2>
             </div>
 
             {data.matches.length === 0 ? (
-              <div className="surface-card flex flex-col items-center p-8 text-center">
+              <div className="bg-card border border-border rounded-xl flex flex-col items-center p-8 text-center">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-3">
                   <Sparkles className="h-6 w-6 text-primary" />
                 </div>
@@ -500,10 +496,10 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
                 {data.matches.map((m) => {
                   const quality = matchQuality(m.score);
                   return (
-                    <li key={m.ride.id} className={`surface-card p-4 transition hover:shadow-md relative ${m.isAiTopPick ? "border-2 border-[#1DB954] bg-gradient-to-r from-[#1DB954]/10 to-transparent" : "hover:border-primary/40"}`}>
+                    <li key={m.ride.id} className={`bg-card rounded-xl p-4 transition relative ${m.isAiTopPick ? "border border-[#c1fbd4]/40 bg-gradient-to-r from-[#c1fbd4]/5 to-transparent" : "border border-border hover:border-[#c1fbd4]/20"}`}>
                       {m.isAiTopPick && (
                         <div className="absolute -top-3 -left-1">
-                          <span className="inline-flex items-center gap-1 bg-[#1DB954] text-black text-[10px] font-bold px-2 py-0.5 rounded shadow-lg uppercase tracking-wider">
+                          <span className="inline-flex items-center gap-1 bg-[#c1fbd4] text-black text-[10px] font-medium px-2.5 py-0.5 rounded-full uppercase tracking-wider">
                             <Sparkles className="h-3 w-3" /> AI Top Pick
                           </span>
                         </div>
@@ -511,9 +507,9 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
                       <div className="flex items-start justify-between gap-4 mt-1">
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
-                            <Badge className="bg-primary/15 text-primary hover:bg-primary/15">{m.score}% match</Badge>
-                            <Badge className={quality.className}>{quality.label}</Badge>
-                            <Badge variant="secondary" className="font-normal">
+                            <Badge className="bg-[#c1fbd4]/10 text-aloe-text hover:bg-[#c1fbd4]/10 rounded-full">{m.score}% match</Badge>
+                            <Badge className={`${quality.className} rounded-full`}>{quality.label}</Badge>
+                            <Badge variant="secondary" className="font-normal rounded-full">
                               {m.ride.role === "driver" ? "Driver" : "Passenger"}
                             </Badge>
                             <span className="ml-1">±{Math.round(m.timeDiffMin)}m · pickup {m.pickupKm.toFixed(1)}km</span>
@@ -533,7 +529,7 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
                                 onClick={(e) => { e.stopPropagation(); setPreviewUserId(m.ride.creator_id); }}
                                 title="View full profile"
                               >
-                                <span className="font-medium text-foreground hover:text-primary transition-colors">{m.profile.full_name}</span>
+                                <span className="font-medium text-foreground hover:text-aloe-text transition-colors">{m.profile.full_name}</span>
                                 {m.profile.department && <span>· {m.profile.department}</span>}
                                 {(m.profile.rating_count ?? 0) > 0 && (
                                   <span className="inline-flex items-center gap-0.5">
@@ -541,7 +537,7 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
                                   </span>
                                 )}
                                 {m.profile.driving_license && (
-                                  <span className="inline-flex items-center gap-0.5 text-[#1DB954] ml-1">
+                                  <span className="inline-flex items-center gap-0.5 text-aloe-text ml-1">
                                     · <IdCard className="h-3 w-3 ml-0.5" /> License
                                   </span>
                                 )}
@@ -549,13 +545,14 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
                             )}
                           </div>
                           {m.matchReason && (
-                            <div className="mt-3 text-xs font-medium text-[#1DB954]">
+                            <div className="mt-3 text-xs font-medium text-aloe-text">
                               {m.matchReason}
                             </div>
                           )}
                         </div>
                         <Button
                           size="sm"
+                          className="rounded-full bg-[#c1fbd4] text-black hover:bg-[#d4f9e0]"
                           onClick={() => requestMut.mutate(m.ride.id)}
                           disabled={requestMut.isPending}
                         >
@@ -572,9 +569,9 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
       </div>
 
       <Dialog open={confirmAction !== null} onOpenChange={(open) => { if (!open) setConfirmAction(null); }}>
-        <DialogContent className="sm:max-w-md bg-background border border-border">
+        <DialogContent className="sm:max-w-md bg-card border border-border">
           <DialogHeader>
-            <DialogTitle className="text-lg font-semibold">
+            <DialogTitle className="text-lg font-medium">
               {confirmAction === "cancel" ? "Cancel Ride Request?" : "Complete & Close Ride?"}
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground mt-2">
@@ -587,6 +584,7 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
             <Button
               variant="ghost"
               size="sm"
+              className="rounded-full"
               onClick={() => setConfirmAction(null)}
               disabled={cancelMut.isPending || closeMut.isPending}
             >
@@ -595,6 +593,7 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
             <Button
               variant={confirmAction === "cancel" ? "destructive" : "default"}
               size="sm"
+              className="rounded-full"
               onClick={() => {
                 if (confirmAction === "cancel") {
                   cancelMut.mutate(undefined, {

@@ -74,21 +74,21 @@ export function NotificationsDropdown() {
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="relative p-2 rounded-lg hover:bg-white/5 transition-colors"
+          className="relative p-2 rounded-full hover:bg-white/[0.04] transition-colors"
         >
-          <Bell className="h-4 w-4 text-muted-foreground" />
+          <Bell className="h-4 w-4 text-[#a1a1aa]" />
           {hasNotifications && (
-            <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+            <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-[#c1fbd4] animate-pulse" />
           )}
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-96 p-0 mr-4 mt-2 bg-card border-border/40 shadow-xl" align="end">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border/40">
-          <h4 className="text-sm font-bold text-foreground">Notifications</h4>
+      <PopoverContent className="w-96 p-0 mr-4 mt-2 bg-card border border-border shadow-shopify-3" align="end">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+          <h4 className="text-sm font-medium text-foreground">Notifications</h4>
           {hasNotifications && (
-            <Badge variant="secondary" className="bg-primary/20 text-primary">
+            <span className="pill-tag-aloe">
               {pendingNotifications.length} New
-            </Badge>
+            </span>
           )}
         </div>
         <div className="max-h-96 overflow-y-auto">
@@ -99,15 +99,15 @@ export function NotificationsDropdown() {
           ) : (
             <ul className="flex flex-col">
               {pendingNotifications.map((notif: any) => (
-                <li key={notif.id} className="border-b border-border/20 last:border-0">
+                <li key={notif.id} className="border-b border-border/50 last:border-0">
                   <div className="px-4 py-3 hover:bg-white/5 transition-colors">
                     <div className="flex items-start gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary text-xs font-bold border border-primary/20 mt-0.5">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#c1fbd4]/10 text-aloe-text text-xs font-medium border border-[#c1fbd4]/15 mt-0.5">
                         {((notif.profile?.full_name ?? "Student").split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase())}
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm text-foreground leading-tight">
-                          <span className="font-bold">{notif.profile?.full_name ?? "Someone"}</span>{" "}
+                          <span className="font-medium">{notif.profile?.full_name ?? "Someone"}</span>{" "}
                           requested to join your ride
                         </p>
                         <p className="text-[11px] text-muted-foreground mt-1 truncate">
@@ -118,27 +118,27 @@ export function NotificationsDropdown() {
                         <div className="flex items-center gap-2 mt-2.5">
                           <Button
                             size="sm"
-                            className="h-8 gap-1 px-3 text-xs font-semibold"
+                            className="h-7 gap-1 px-3 text-xs font-medium rounded-full bg-[#c1fbd4] text-black hover:bg-[#a8f0be]"
                             onClick={() => respondMut.mutate({ requestId: notif.id, accept: true })}
                             disabled={respondMut.isPending && respondingId === notif.id}
                           >
-                            <Check className="h-3.5 w-3.5" />
+                            <Check className="h-3 w-3" />
                             {respondMut.isPending && respondingId === notif.id ? "Accepting..." : "Accept"}
                           </Button>
                           <Button
                             size="sm"
                             variant="outline"
-                            className="h-8 gap-1 px-3 text-xs font-semibold"
+                            className="h-7 gap-1 px-3 text-xs font-medium rounded-full border-white/15 text-[#a1a1aa] hover:bg-white/[0.04]"
                             onClick={() => respondMut.mutate({ requestId: notif.id, accept: false })}
                             disabled={respondMut.isPending && respondingId === notif.id}
                           >
-                            <X className="h-3.5 w-3.5" />
+                            <X className="h-3 w-3" />
                             Decline
                           </Button>
                           <Link
                             href={`/rides/${notif.target_ride_id}`}
                             onClick={() => setOpen(false)}
-                            className="ml-auto text-[10px] text-muted-foreground hover:text-primary transition-colors flex items-center gap-0.5"
+                            className="ml-auto text-[10px] text-[#71717a] hover:text-aloe-text transition-colors flex items-center gap-0.5"
                           >
                             View <ArrowRight className="h-3 w-3" />
                           </Link>

@@ -21,7 +21,7 @@ export default function MapPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-card/60 border border-border/40 rounded-xl p-4 backdrop-blur">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-card/60 border border-border rounded-xl p-4 backdrop-blur">
         <div>
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />

@@ -71,12 +71,12 @@ export default function AnalyticsPage() {
   return (
     <div className="space-y-6 animate-fade-in pb-10">
       {/* Top Banner */}
-      <div className="flex items-center gap-4 rounded-2xl border border-border/40 bg-card p-5 shadow-sm">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/20 text-cyan-400">
+      <div className="flex items-center gap-4 rounded-xl border border-border bg-card p-5 shadow-sm">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#c1fbd4]/10 text-aloe-text">
           <BarChart3 className="h-6 w-6" />
         </div>
         <div>
-          <h2 className="text-lg font-bold text-foreground">Campus mobility insights</h2>
+          <h2 className="text-lg font-medium text-foreground">Campus mobility insights</h2>
           <p className="text-sm text-muted-foreground">
             Live overview of how your campus travels — this semester.
           </p>
@@ -86,46 +86,46 @@ export default function AnalyticsPage() {
       {/* Stats Grid */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {/* Row 1 */}
-        <div className="flex flex-col rounded-2xl border border-border/40 bg-card p-5 shadow-sm">
-          <Users className="mb-3 h-5 w-5 text-blue-400" />
-          <span className="text-2xl font-bold text-foreground">2,148</span>
+        <div className="flex flex-col rounded-xl border border-border bg-card p-5 shadow-sm">
+          <Users className="mb-3 h-5 w-5 text-aloe-text" />
+          <span className="text-2xl font-light text-foreground">2,148</span>
           <span className="text-xs text-muted-foreground">Verified students</span>
         </div>
-        <div className="flex flex-col rounded-2xl border border-border/40 bg-card p-5 shadow-sm">
-          <CarFront className="mb-3 h-5 w-5 text-emerald-400" />
-          <span className="text-2xl font-bold text-foreground">1,245</span>
+        <div className="flex flex-col rounded-xl border border-border bg-card p-5 shadow-sm">
+          <CarFront className="mb-3 h-5 w-5 text-aloe-text" />
+          <span className="text-2xl font-light text-foreground">1,245</span>
           <span className="text-xs text-muted-foreground">Shared rides</span>
         </div>
-        <div className="flex flex-col rounded-2xl border border-border/40 bg-card p-5 shadow-sm">
-          <IndianRupee className="mb-3 h-5 w-5 text-emerald-400" />
-          <span className="text-2xl font-bold text-foreground">₹4.9L</span>
+        <div className="flex flex-col rounded-xl border border-border bg-card p-5 shadow-sm">
+          <IndianRupee className="mb-3 h-5 w-5 text-aloe-text" />
+          <span className="text-2xl font-light text-foreground">₹4.9L</span>
           <span className="text-xs text-muted-foreground">Money saved</span>
         </div>
-        <div className="flex flex-col rounded-2xl border border-border/40 bg-card p-5 shadow-sm">
-          <Fuel className="mb-3 h-5 w-5 text-amber-400" />
-          <span className="text-2xl font-bold text-foreground">3,120 L</span>
+        <div className="flex flex-col rounded-xl border border-border bg-card p-5 shadow-sm">
+          <Fuel className="mb-3 h-5 w-5 text-pistachio-text" />
+          <span className="text-2xl font-light text-foreground">3,120 L</span>
           <span className="text-xs text-muted-foreground">Fuel saved</span>
         </div>
 
         {/* Row 2 */}
-        <div className="flex flex-col rounded-2xl border border-border/40 bg-card p-5 shadow-sm">
-          <Leaf className="mb-3 h-5 w-5 text-emerald-400" />
-          <span className="text-2xl font-bold text-foreground">7.4 t</span>
+        <div className="flex flex-col rounded-xl border border-border bg-card p-5 shadow-sm">
+          <Leaf className="mb-3 h-5 w-5 text-aloe-text" />
+          <span className="text-2xl font-light text-foreground">7.4 t</span>
           <span className="text-xs text-muted-foreground">CO₂ reduced</span>
         </div>
-        <div className="flex flex-col rounded-2xl border border-border/40 bg-card p-5 shadow-sm">
-          <Gauge className="mb-3 h-5 w-5 text-purple-400" />
-          <span className="text-2xl font-bold text-foreground">3.2/seat</span>
+        <div className="flex flex-col rounded-xl border border-border bg-card p-5 shadow-sm">
+          <Gauge className="mb-3 h-5 w-5 text-pistachio-text" />
+          <span className="text-2xl font-light text-foreground">3.2/seat</span>
           <span className="text-xs text-muted-foreground">Avg occupancy</span>
         </div>
-        <div className="flex flex-col rounded-2xl border border-border/40 bg-card p-5 shadow-sm">
-          <CheckCircle2 className="mb-3 h-5 w-5 text-emerald-400" />
-          <span className="text-2xl font-bold text-foreground">94%</span>
+        <div className="flex flex-col rounded-xl border border-border bg-card p-5 shadow-sm">
+          <CheckCircle2 className="mb-3 h-5 w-5 text-aloe-text" />
+          <span className="text-2xl font-light text-foreground">94%</span>
           <span className="text-xs text-muted-foreground">Ride success rate</span>
         </div>
-        <div className="flex flex-col rounded-2xl border border-border/40 bg-card p-5 shadow-sm">
-          <Clock className="mb-3 h-5 w-5 text-blue-400" />
-          <span className="text-2xl font-bold text-foreground">2.4 min</span>
+        <div className="flex flex-col rounded-xl border border-border bg-card p-5 shadow-sm">
+          <Clock className="mb-3 h-5 w-5 text-aloe-text" />
+          <span className="text-2xl font-light text-foreground">2.4 min</span>
           <span className="text-xs text-muted-foreground">Avg match time</span>
         </div>
       </div>
@@ -133,7 +133,7 @@ export default function AnalyticsPage() {
       {/* Charts Row 1 */}
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         {/* Line Chart */}
-        <div className="flex flex-col rounded-2xl border border-border/40 bg-card p-5 shadow-sm">
+        <div className="flex flex-col rounded-xl border border-border bg-card p-5 shadow-sm">
           <h3 className="mb-6 font-bold text-foreground">Daily active users & shared rides</h3>
           <div className="h-[250px] w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -153,7 +153,7 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Donut Chart */}
-        <div className="flex flex-col rounded-2xl border border-border/40 bg-card p-5 shadow-sm">
+        <div className="flex flex-col rounded-xl border border-border bg-card p-5 shadow-sm">
           <h3 className="mb-2 font-bold text-foreground">Transport mode share</h3>
           <div className="flex flex-1 items-center justify-between">
             <div className="h-[200px] w-[200px]">
@@ -201,7 +201,7 @@ export default function AnalyticsPage() {
       {/* Charts Row 2 */}
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         {/* Bar Chart */}
-        <div className="flex flex-col rounded-2xl border border-border/40 bg-card p-5 shadow-sm">
+        <div className="flex flex-col rounded-xl border border-border bg-card p-5 shadow-sm">
           <h3 className="mb-6 font-bold text-foreground">Peak travel hours</h3>
           <div className="h-[250px] w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -220,7 +220,7 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Most Popular Routes */}
-        <div className="flex flex-col rounded-2xl border border-border/40 bg-card p-5 shadow-sm">
+        <div className="flex flex-col rounded-xl border border-border bg-card p-5 shadow-sm">
           <h3 className="mb-6 font-bold text-foreground">Most popular routes</h3>
           <div className="flex flex-col space-y-5 flex-1 justify-center pb-2">
             {popularRoutes.map((route) => (

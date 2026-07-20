@@ -6,9 +6,10 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * NxtPool — Neo-Brutalist Design System
- * Dominant Yellow (#ffe17c), deep Charcoal (#171e19), Sage (#b7c6c2), UI White, and pure Black borders.
- * Typography: Cabinet Grotesk (headings) + Satoshi (body)
+ * NxtPool — Dual Design System
+ * Landing page: Neo-Brutalist (Yellow #ffe17c, Charcoal #171e19, Sage #b7c6c2)
+ * Dashboard:    Shopify-Cinematic Dark (Black #000, Aloe #c1fbd4, Pistachio #d4f9e0)
+ * Typography:   Cabinet Grotesk + Satoshi (landing) / Inter (dashboard)
  */
 
 @theme inline {
@@ -43,11 +44,11 @@
 }
 
 :root {
-  --radius: 0.25rem; /* Strict geometric corners */
+  --radius: 0.25rem;
   --font-sans: 'Satoshi', var(--font-sans-family), sans-serif;
   --font-heading: 'Cabinet Grotesk', var(--font-heading-family), sans-serif;
   
-  /* Neo-Brutalist Color Palette */
+  /* Neo-Brutalist Color Palette (Landing Page) */
   --background: #171e19;
   --foreground: #000000;
   --surface: #ffffff;
@@ -72,24 +73,45 @@
   --ring: #000000;
 }
 
+/*
+ * Shopify-Cinematic Dark Track (Dashboard)
+ * Pure black canvas, aloe/pistachio accents, shade ladder text
+ */
 .dark {
-  --background: #121713;
+  --background: #000000;
   --foreground: #ffffff;
-  --surface: #1a221b;
+  --surface: #0a0a0a;
   --surface-foreground: #ffffff;
-  --card: #1a221b;
+  --card: #0a0a0a;
   --card-foreground: #ffffff;
-  --popover: #1f2a20;
+  --popover: #0a0a0a;
   --popover-foreground: #ffffff;
-  --primary: #ffe17c;
+  --primary: #c1fbd4;
   --primary-foreground: #000000;
-  --secondary: #b7c6c2;
+  --secondary: #d4f9e0;
   --secondary-foreground: #000000;
-  --muted: #222d23;
+  --muted: #1e2c31;
   --muted-foreground: #a1a1aa;
-  --border: #2c3a2e;
-  --input: #151c16;
-  --ring: #ffe17c;
+  --accent: #c1fbd4;
+  --accent-foreground: #000000;
+  --border: #1e2c31;
+  --input: #0a0a0a;
+  --ring: #c1fbd4;
+
+  /* Shopify shade ladder */
+  --shade-30: #d4d4d8;
+  --shade-40: #a1a1aa;
+  --shade-50: #71717a;
+  --shade-60: #52525b;
+  --shade-70: #3f3f46;
+
+  /* Shopify accent palette */
+  --aloe: #c1fbd4;
+  --pistachio: #d4f9e0;
+  --link-cool-1: #9dabad;
+  --link-cool-2: #9797a2;
+  --link-cool-3: #bdbdca;
+  --link-mint: #99b3ad;
 }
 
 /* ── Base layer ── */
@@ -99,19 +121,19 @@
   }
 
   * {
-    border-color: #000000;
+    border-color: var(--color-border);
   }
 
   body {
     background-color: var(--color-background);
-    color: #ffffff;
+    color: var(--color-foreground);
     font-family: var(--font-sans);
     font-weight: 500;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Neo-Brutalist Editorial Headings */
+  /* Neo-Brutalist Editorial Headings (Landing Page) */
   h1, h2, h3, h4 {
     font-family: var(--font-heading);
     font-weight: 800;
@@ -121,7 +143,31 @@
   }
 }
 
-/* ── Neo-Brutalist Utility Classes ── */
+/*
+ * ── Shopify-Cinematic Scoped Styles ──
+ * Applied via .shopify-scope on the authenticated layout wrapper
+ */
+.shopify-scope {
+  font-family: 'Inter Variable', 'Inter', var(--font-sans-family), sans-serif;
+  font-feature-settings: "ss03";
+}
+
+.shopify-scope h1,
+.shopify-scope h2,
+.shopify-scope h3,
+.shopify-scope h4 {
+  font-family: 'Inter Variable', 'Inter', var(--font-sans-family), sans-serif;
+  font-feature-settings: "ss03";
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.shopify-scope .display-thin {
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+
+/* ── Neo-Brutalist Utility Classes (Landing Page) ── */
 
 @utility bg-dot-pattern {
   background-image: radial-gradient(rgba(0, 0, 0, 0.1) 1.5px, transparent 1.5px);
@@ -190,6 +236,158 @@
   border: 2px solid #000000;
 }
 
+/* ── Shopify-Cinematic Button Vocabulary ── */
+
+@utility btn-pill-primary {
+  background-color: var(--aloe, #c1fbd4);
+  color: #000000;
+  font-family: 'Inter Variable', 'Inter', sans-serif;
+  font-weight: 550;
+  font-feature-settings: "ss03";
+  border: none;
+  border-radius: 9999px;
+  padding: 10px 24px;
+  font-size: 14px;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-pill-primary:hover {
+  background-color: #a8f0be;
+  transform: translateY(-1px);
+}
+
+.btn-pill-primary:active {
+  transform: translateY(0);
+}
+
+.btn-pill-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@utility btn-pill-outline {
+  background-color: transparent;
+  color: #ffffff;
+  font-family: 'Inter Variable', 'Inter', sans-serif;
+  font-weight: 500;
+  font-feature-settings: "ss03";
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  border-radius: 9999px;
+  padding: 10px 24px;
+  font-size: 14px;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-pill-outline:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.btn-pill-outline:active {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+@utility btn-pill-ghost {
+  background-color: transparent;
+  color: var(--shade-40, #a1a1aa);
+  font-family: 'Inter Variable', 'Inter', sans-serif;
+  font-weight: 500;
+  font-feature-settings: "ss03";
+  border: none;
+  border-radius: 9999px;
+  padding: 8px 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-pill-ghost:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
+@utility btn-pill-danger {
+  background-color: #dc2626;
+  color: #ffffff;
+  font-family: 'Inter Variable', 'Inter', sans-serif;
+  font-weight: 550;
+  font-feature-settings: "ss03";
+  border: none;
+  border-radius: 9999px;
+  padding: 10px 24px;
+  font-size: 14px;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-pill-danger:hover {
+  background-color: #b91c1c;
+}
+
+/* ── Shopify Elevation System (Dark) ── */
+
+@utility shadow-shopify-1 {
+  box-shadow: 0 1px 2px rgba(255,255,255,0.03), inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+@utility shadow-shopify-2 {
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 1px 3px rgba(0,0,0,0.4), 0 4px 8px rgba(0,0,0,0.3);
+}
+
+@utility shadow-shopify-3 {
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 2px 4px rgba(0,0,0,0.3), 0 8px 16px rgba(0,0,0,0.25);
+}
+
+/* ── Shopify Card (Dark) ── */
+
+@utility card-shopify {
+  background-color: #0a0a0a;
+  border: 1px solid #1e2c31;
+  border-radius: 12px;
+  color: #ffffff;
+}
+
+@utility card-shopify-elevated {
+  background-color: #0a0a0a;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  color: #ffffff;
+  box-shadow: 0 1px 2px rgba(255,255,255,0.03), inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+/* ── Shopify Pill Tags ── */
+
+@utility pill-tag-aloe {
+  background-color: rgba(193, 251, 212, 0.15);
+  color: #c1fbd4;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-radius: 9999px;
+  padding: 3px 10px;
+  font-feature-settings: "ss03";
+}
+
+@utility pill-tag-shade {
+  background-color: rgba(255, 255, 255, 0.06);
+  color: #a1a1aa;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  border-radius: 9999px;
+  padding: 3px 10px;
+  font-feature-settings: "ss03";
+}
+
+/* ── Animations (shared) ── */
+
 @keyframes marquee {
   0% { transform: translateX(0%); }
   100% { transform: translateX(-50%); }
@@ -208,6 +406,21 @@
 
 .animate-float {
   animation: float 6s ease-in-out infinite;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out forwards;
 }
 
 /* ── Additional styling helper utilities ── */
@@ -235,27 +448,12 @@
 }
 
 @utility glow-primary {
-  box-shadow: 0 0 12px 2px rgba(29, 185, 84, 0.25);
-  border-color: #1db954;
+  box-shadow: 0 0 12px 2px rgba(193, 251, 212, 0.2);
+  border-color: #c1fbd4;
 }
 
 @utility gradient-text {
   background: linear-gradient(135deg, #ffe17c 0%, #b7c6c2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@utility animate-fade-in-up {
-  animation: fadeInUp 0.4s ease-out forwards;
 }

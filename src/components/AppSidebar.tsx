@@ -58,19 +58,19 @@ export function AppSidebar() {
   };
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-30 flex w-60 flex-col bg-[#0a0f0b] border-r border-border/40">
+    <aside className="fixed inset-y-0 left-0 z-30 flex w-60 flex-col bg-black border-r border-[#1e2c31]/60">
       {/* Logo */}
       <div className="flex items-center gap-3 px-5 py-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#1DB954]/15">
-          <Zap className="h-5 w-5 text-[#1DB954]" />
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#c1fbd4]/10">
+          <Zap className="h-4 w-4 text-[#c1fbd4]" />
         </div>
-        <span className="text-lg font-bold tracking-tight text-foreground">
+        <span className="text-[15px] font-semibold tracking-tight text-white">
           NXTPOOL
         </span>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1 px-3 pt-2">
+      <nav className="flex-1 space-y-0.5 px-3 pt-2">
         {navItems.map(({ label, icon: Icon, href }) => {
           const isActive =
             pathname === href ||
@@ -80,18 +80,21 @@ export function AppSidebar() {
             <Link
               key={label}
               href={href}
-              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium transition-all duration-150 ${
                 isActive
-                  ? "bg-[#1DB954]/15 text-[#1DB954]"
-                  : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
+                  ? "bg-white/[0.06] text-[#c1fbd4] border-l-2 border-[#c1fbd4] ml-0 pl-2.5"
+                  : "text-[#a1a1aa] hover:bg-white/[0.03] hover:text-[#d4d4d8] border-l-2 border-transparent"
               }`}
             >
-              <Icon className="h-[18px] w-[18px]" />
+              <Icon className="h-[16px] w-[16px]" />
               {label}
             </Link>
           );
         })}
       </nav>
+
+      {/* Divider */}
+      <div className="mx-4 border-t border-[#1e2c31]/60" />
 
       {/* Logout & SOS Section */}
       <div className="p-3 space-y-2">
@@ -99,22 +102,22 @@ export function AppSidebar() {
           <AlertDialogTrigger asChild>
             <button
               type="button"
-              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-white/5 hover:text-red-400 cursor-pointer"
+              className="flex w-full items-center gap-3 rounded-full px-3 py-2 text-[13px] font-medium text-[#a1a1aa] transition-all hover:bg-white/[0.03] hover:text-red-400 cursor-pointer"
             >
-              <LogOut className="h-[18px] w-[18px]" />
+              <LogOut className="h-4 w-4" />
               Logout
             </button>
           </AlertDialogTrigger>
-          <AlertDialogContent className="bg-background border border-border">
+          <AlertDialogContent className="bg-[#0a0a0a] border border-[#1e2c31]">
             <AlertDialogHeader>
-              <AlertDialogTitle>Sign out?</AlertDialogTitle>
-              <AlertDialogDescription className="text-xs text-muted-foreground mt-2">
+              <AlertDialogTitle className="text-white font-medium">Sign out?</AlertDialogTitle>
+              <AlertDialogDescription className="text-[13px] text-[#a1a1aa] mt-2">
                 Are you sure you want to sign out of NxtPool?
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter className="flex gap-2 justify-end mt-4">
-              <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={signOut} className="bg-red-600 hover:bg-red-700 text-white cursor-pointer">
+              <AlertDialogCancel className="btn-pill-ghost cursor-pointer border-0">Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={signOut} className="btn-pill-danger cursor-pointer">
                 Sign out
               </AlertDialogAction>
             </AlertDialogFooter>
@@ -123,9 +126,9 @@ export function AppSidebar() {
 
         <button
           type="button"
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-red-600 px-3 py-2.5 text-sm font-bold text-white transition-colors hover:bg-red-700 cursor-pointer"
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-red-600/90 px-3 py-2 text-[13px] font-semibold text-white transition-all hover:bg-red-600 cursor-pointer"
         >
-          <ShieldAlert className="h-4 w-4" />
+          <ShieldAlert className="h-3.5 w-3.5" />
           SOS Emergency
         </button>
       </div>

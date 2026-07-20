@@ -131,7 +131,7 @@ export function NewRideForm() {
   return (
     <div className="mx-auto max-w-2xl font-sans">
       <div className="mb-6">
-        <h1 className="text-3xl font-heading font-extrabold tracking-tighter text-white">
+        <h1 className="text-3xl font-heading font-medium tracking-tighter text-white">
           {role === "driver" ? "Offer a Ride" : "Find a Ride"}
         </h1>
         <p className="mt-1.5 text-sm text-muted-foreground">
@@ -149,30 +149,30 @@ export function NewRideForm() {
           return (
             <li key={label} className="flex flex-1 items-center gap-2">
               <span className={cn(
-                "flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold border-2 transition-all",
-                done ? "bg-[#b7c6c2] border-black text-black" :
-                active ? "bg-[#ffe17c] border-black text-black shadow-neo-sm" :
-                "bg-[#1a221b] border-border/40 text-muted-foreground",
+                "flex h-7 w-7 items-center justify-center rounded-full text-xs font-medium border transition-all",
+                done ? "bg-[#c1fbd4] border-[#1e2c31] text-black" :
+                active ? "bg-[#c1fbd4] border-[#1e2c31] text-black" :
+                "bg-[#0a0a0a] border-[#1e2c31] text-muted-foreground",
               )}>
                 {done ? <Check className="h-3.5 w-3.5" /> : i + 1}
               </span>
-              <span className={cn("text-xs font-bold", active ? "text-[#ffe17c]" : "text-muted-foreground")}>{label}</span>
-              {i < steps.length - 1 && <span className={cn("h-0.5 flex-1", done ? "bg-[#b7c6c2]" : "bg-border/20")} />}
+              <span className={cn("text-xs font-medium", active ? "text-[#c1fbd4]" : "text-muted-foreground")}>{label}</span>
+              {i < steps.length - 1 && <span className={cn("h-0.5 flex-1", done ? "bg-[#c1fbd4]" : "bg-[#1e2c31]")} />}
             </li>
           );
         })}
       </ol>
 
-      <div className="bg-card border-2 border-border/40 rounded-xl p-6 shadow-neo-lg text-white">
+      <div className="bg-[#0a0a0a] border border-[#1e2c31] rounded-xl p-6 text-white">
         {/* Step 0: Locations */}
         <div className={cn("transition-opacity duration-300", step === 0 ? "opacity-100" : "hidden opacity-0")}>
           <div className="space-y-5">
-            <h2 className="text-lg font-bold text-white flex items-center gap-2">
-              <MapPin className="h-5 w-5 text-[#ffe17c]" /> Route Details
+            <h2 className="text-lg font-medium text-white flex items-center gap-2">
+              <MapPin className="h-5 w-5 text-[#c1fbd4]" /> Route Details
             </h2>
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <Label className="text-white font-bold flex items-center gap-1.5">Pickup Point</Label>
+                <Label className="text-white font-medium flex items-center gap-1.5">Pickup Point</Label>
                 <LocationInput 
                   value={pickup} 
                   onChange={setPickup} 
@@ -182,7 +182,7 @@ export function NewRideForm() {
                 />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-white font-bold flex items-center gap-1.5">Destination</Label>
+                <Label className="text-white font-medium flex items-center gap-1.5">Destination</Label>
                 <LocationInput 
                   value={dest} 
                   onChange={setDest} 
@@ -191,12 +191,12 @@ export function NewRideForm() {
                   biasLng={activeCampus.defaultCoordinates.lng} 
                 />
                 {sameLocation && (
-                  <p className="text-xs text-[#F15E6C] font-bold mt-1.5">Pickup and destination cannot be the same point</p>
+                  <p className="text-xs text-[#F15E6C] font-medium mt-1.5">Pickup and destination cannot be the same point</p>
                 )}
               </div>
             </div>
             {pickup && dest && !sameLocation && (
-              <div className="overflow-hidden rounded-lg border-2 border-black mt-4">
+              <div className="overflow-hidden rounded-lg border border-[#1e2c31] mt-4">
                 <TripMap
                   pickup={{ lat: pickup.lat, lng: pickup.lng }}
                   destination={{ lat: dest.lat, lng: dest.lng }}
@@ -212,13 +212,13 @@ export function NewRideForm() {
         {/* Step 1: Time and preferences */}
         <div className={cn("transition-opacity duration-300", step === 1 ? "opacity-100" : "hidden opacity-0")}>
           <div className="space-y-5">
-            <h2 className="text-lg font-bold text-white flex items-center gap-2">
-              <Clock className="h-5 w-5 text-[#ffe17c]" /> Depart Window & Vehicle details
+            <h2 className="text-lg font-medium text-white flex items-center gap-2">
+              <Clock className="h-5 w-5 text-[#c1fbd4]" /> Depart Window & Vehicle details
             </h2>
 
             {/* Time presets */}
             <div className="space-y-1.5">
-              <Label className="text-white font-bold">Departure Time</Label>
+              <Label className="text-white font-medium">Departure Time</Label>
               <div className="flex flex-wrap gap-2 mb-3">
                 {[
                   { label: "Now", offset: 5 },
@@ -230,7 +230,7 @@ export function NewRideForm() {
                     key={preset.label}
                     type="button"
                     onClick={() => setDepartAt(makeDepartLocal(preset.offset))}
-                    className="inline-flex items-center gap-1 rounded-full border-2 border-black bg-white text-black px-3.5 py-1.5 text-xs font-bold hover:bg-[#ffe17c] transition-all cursor-pointer"
+                    className="inline-flex items-center gap-1 rounded-full border border-[#1e2c31] bg-[#0a0a0a] text-white px-3.5 py-1.5 text-xs font-medium hover:bg-[#c1fbd4]/10 hover:border-[#c1fbd4]/30 hover:text-[#c1fbd4] transition-all cursor-pointer"
                   >
                     <Zap className="h-3 w-3 fill-current" /> {preset.label}
                   </button>
@@ -244,11 +244,11 @@ export function NewRideForm() {
                     value={departAt} 
                     onChange={(e) => setDepartAt(e.target.value)} 
                     required 
-                    className="bg-white border-2 border-black text-black placeholder:text-neutral-400 focus-visible:ring-black h-11"
+                    className="bg-[#0a0a0a] border border-[#1e2c31] text-white placeholder:text-[#71717a] focus-visible:ring-[#c1fbd4]/30 h-11 rounded-lg"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="flex" className="text-white font-bold">Flex window (mins)</Label>
+                  <Label htmlFor="flex" className="text-white font-medium">Flex window (mins)</Label>
                   <Input 
                     id="flex" 
                     type="number" 
@@ -256,14 +256,14 @@ export function NewRideForm() {
                     max={120} 
                     value={flex} 
                     onChange={(e) => setFlex(Number(e.target.value))} 
-                    className="bg-white border-2 border-black text-black placeholder:text-neutral-400 focus-visible:ring-black h-11"
+                    className="bg-[#0a0a0a] border border-[#1e2c31] text-white placeholder:text-[#71717a] focus-visible:ring-[#c1fbd4]/30 h-11 rounded-lg"
                   />
                 </div>
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <Label className="text-white font-bold">
+              <Label className="text-white font-medium">
                 {role === "driver" ? "Seats offered" : "Passengers count"}
               </Label>
               <div className="flex flex-wrap gap-2">
@@ -273,8 +273,8 @@ export function NewRideForm() {
                     type="button" 
                     onClick={() => setSeats(n)}
                     className={cn(
-                      "h-11 w-11 rounded-lg border-2 border-black text-sm font-bold transition-all cursor-pointer",
-                      seats === n ? "bg-[#ffe17c] text-black shadow-neo-sm" : "bg-white text-black hover:bg-neutral-100",
+                      "h-11 w-11 rounded-full border border-[#1e2c31] text-sm font-medium transition-all cursor-pointer",
+                      seats === n ? "bg-[#c1fbd4] text-black border-[#c1fbd4]" : "bg-[#0a0a0a] text-white hover:border-[#c1fbd4]/30",
                     )}
                   >
                     {n}
@@ -284,7 +284,7 @@ export function NewRideForm() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-white font-bold">Vehicle Type Preference</Label>
+              <Label className="text-white font-medium">Vehicle Type Preference</Label>
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {VEHICLE_OPTIONS.map(({ value, label, icon: Icon, hint }) => {
                   const active = vehicle === value;
@@ -294,13 +294,13 @@ export function NewRideForm() {
                       type="button" 
                       onClick={() => setVehicle(value)}
                       className={cn(
-                        "flex flex-col items-center gap-1.5 rounded-lg border-2 border-black p-3 text-xs font-bold transition-all bg-white text-black cursor-pointer",
-                        active ? "bg-[#ffe17c] shadow-neo-sm" : "hover:bg-neutral-100",
+                        "flex flex-col items-center gap-1.5 rounded-lg border border-[#1e2c31] p-3 text-xs font-medium transition-all bg-[#0a0a0a] text-white cursor-pointer",
+                        active ? "bg-[#c1fbd4]/10 border-[#c1fbd4]/40 text-[#c1fbd4]" : "hover:border-[#c1fbd4]/20",
                       )}
                     >
-                      <Icon className={cn("h-5 w-5", active ? "text-black" : "text-neutral-500")} />
-                      <span className="font-bold">{label}</span>
-                      <span className="text-[10px] text-neutral-500 font-medium">{hint}</span>
+                      <Icon className={cn("h-5 w-5", active ? "text-[#c1fbd4]" : "text-[#71717a]")} />
+                      <span className="font-medium">{label}</span>
+                      <span className="text-[10px] text-[#71717a] font-normal">{hint}</span>
                     </button>
                   );
                 })}
@@ -309,30 +309,30 @@ export function NewRideForm() {
 
             {/* Fare estimation card */}
             {distanceKm > 0 && (
-              <div className="rounded-lg border-2 border-black bg-[#b7c6c2]/10 p-4 text-white">
-                <div className="flex items-center gap-2 text-sm font-bold text-[#ffe17c]">
+              <div className="rounded-lg border border-[#1e2c31] bg-[#c1fbd4]/5 p-4 text-white">
+                <div className="flex items-center gap-2 text-sm font-medium text-[#c1fbd4]">
                   <IndianRupee className="h-4 w-4" />
                   Estimated Split Fare Info
                 </div>
                 <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
                   <div>
-                    <div className="text-muted-foreground font-bold">Distance</div>
-                    <div className="text-sm font-extrabold text-white mt-0.5">{distanceKm.toFixed(1)} km</div>
+                    <div className="text-muted-foreground font-medium">Distance</div>
+                    <div className="text-sm font-medium text-white mt-0.5">{distanceKm.toFixed(1)} km</div>
                   </div>
                   <div>
-                    <div className="text-muted-foreground font-bold">Total Est.</div>
-                    <div className="text-sm font-extrabold text-white mt-0.5">₹{estFare}</div>
+                    <div className="text-muted-foreground font-medium">Total Est.</div>
+                    <div className="text-sm font-medium text-white mt-0.5">₹{estFare}</div>
                   </div>
                   <div>
-                    <div className="text-muted-foreground font-bold">Per head</div>
-                    <div className="text-sm font-extrabold text-[#ffe17c] mt-0.5">~₹{perHead}</div>
+                    <div className="text-muted-foreground font-medium">Per head</div>
+                    <div className="text-sm font-medium text-[#c1fbd4] mt-0.5">~₹{perHead}</div>
                   </div>
                 </div>
               </div>
             )}
 
             <div className="space-y-1.5">
-              <Label htmlFor="cost" className="text-white font-bold">
+              <Label htmlFor="cost" className="text-white font-medium">
                 {role === "driver" ? "Suggested fuel split charge per head (optional)" : "Maximum fare split budget (optional)"}
               </Label>
               <Input 
@@ -342,18 +342,18 @@ export function NewRideForm() {
                 value={cost} 
                 onChange={(e) => setCost(e.target.value)} 
                 placeholder={estFare ? `Suggested ~₹${perHead}` : "Leave blank for auto split"} 
-                className="bg-white border-2 border-black text-black placeholder:text-neutral-400 focus-visible:ring-black h-11"
+                className="bg-[#0a0a0a] border border-[#1e2c31] text-white placeholder:text-[#71717a] focus-visible:ring-[#c1fbd4]/30 h-11 rounded-lg"
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="notes" className="text-white font-bold">Additional Notes (optional)</Label>
+              <Label htmlFor="notes" className="text-white font-medium">Additional Notes (optional)</Label>
               <Textarea 
                 id="notes" 
                 value={notes} 
                 onChange={(e) => setNotes(e.target.value)} 
                 placeholder="e.g. Carrying one backpack. Female-only match preferred." 
                 rows={2} 
-                className="bg-white border-2 border-black text-black placeholder:text-neutral-400 focus-visible:ring-black"
+                className="bg-[#0a0a0a] border border-[#1e2c31] text-white placeholder:text-[#71717a] focus-visible:ring-[#c1fbd4]/30 rounded-lg"
               />
             </div>
           </div>
@@ -362,10 +362,10 @@ export function NewRideForm() {
         {/* Step 2: Confirm */}
         {step === 2 && pickup && dest && (
           <div className="space-y-4">
-            <h2 className="text-lg font-bold text-white flex items-center gap-2">
-              <ShieldCheck className="h-5 w-5 text-[#ffe17c]" /> Confirm your ride details
+            <h2 className="text-lg font-medium text-white flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5 text-[#c1fbd4]" /> Confirm your ride details
             </h2>
-            <div className="overflow-hidden rounded-lg border-2 border-black">
+            <div className="overflow-hidden rounded-lg border border-[#1e2c31]">
               <TripMap
                 pickup={{ lat: pickup.lat, lng: pickup.lng }}
                 destination={{ lat: dest.lat, lng: dest.lng }}
@@ -374,44 +374,44 @@ export function NewRideForm() {
                 driver={null}
               />
             </div>
-            <div className="space-y-3 rounded-lg border-2 border-black bg-white/5 p-4 text-sm">
+            <div className="space-y-3 rounded-lg border border-[#1e2c31] bg-[#0a0a0a] p-4 text-sm">
               <div className="flex items-start gap-2">
                 <div className="mt-1 flex flex-col items-center gap-0.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-[#ffe17c]" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#c1fbd4]" />
                   <span className="h-5 w-0.5 bg-neutral-600" />
-                  <span className="h-2.5 w-2.5 rounded bg-[#b7c6c2]" />
+                  <span className="h-2.5 w-2.5 rounded bg-[#d4f9e0]" />
                 </div>
                 <div className="min-w-0 flex-1 space-y-1">
-                  <div className="truncate font-bold text-white">{pickup.label}</div>
+                  <div className="truncate font-medium text-white">{pickup.label}</div>
                   <div className="truncate text-muted-foreground">{dest.label}</div>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3 border-t border-border/40 pt-3 text-xs">
+              <div className="grid grid-cols-2 gap-3 border-t border-[#1e2c31] pt-3 text-xs">
                 <div>
-                  <span className="text-muted-foreground font-bold block">DEPARTURE</span>
-                  <div className="font-bold text-white mt-0.5">{fmtDepart(departAt)}</div>
+                  <span className="text-muted-foreground font-medium block">DEPARTURE</span>
+                  <div className="font-medium text-white mt-0.5">{fmtDepart(departAt)}</div>
                 </div>
                 <div>
-                  <span className="text-muted-foreground font-bold block">FLEXIBILITY</span>
-                  <div className="font-bold text-white mt-0.5">±{flex} mins</div>
+                  <span className="text-muted-foreground font-medium block">FLEXIBILITY</span>
+                  <div className="font-medium text-white mt-0.5">±{flex} mins</div>
                 </div>
                 <div>
-                  <span className="text-muted-foreground font-bold block">SEATS / CAPACITY</span>
-                  <div className="font-bold text-white mt-0.5">{seats} seats</div>
+                  <span className="text-muted-foreground font-medium block">SEATS / CAPACITY</span>
+                  <div className="font-medium text-white mt-0.5">{seats} seats</div>
                 </div>
                 <div>
-                  <span className="text-muted-foreground font-bold block">VEHICLE CLASS</span>
-                  <div className="font-bold text-white mt-0.5 capitalize">{vehicle}</div>
+                  <span className="text-muted-foreground font-medium block">VEHICLE CLASS</span>
+                  <div className="font-medium text-white mt-0.5 capitalize">{vehicle}</div>
                 </div>
                 {distanceKm > 0 && (
                   <>
                     <div>
-                      <span className="text-muted-foreground font-bold block">TOTAL DISTANCE</span>
-                      <div className="font-bold text-white mt-0.5">{distanceKm.toFixed(1)} km</div>
+                      <span className="text-muted-foreground font-medium block">TOTAL DISTANCE</span>
+                      <div className="font-medium text-white mt-0.5">{distanceKm.toFixed(1)} km</div>
                     </div>
                     <div>
-                      <span className="text-muted-foreground font-bold block">FAREsplit ESTIMATE</span>
-                      <div className="font-bold text-[#ffe17c] mt-0.5">
+                      <span className="text-muted-foreground font-medium block">FAREsplit ESTIMATE</span>
+                      <div className="font-medium text-[#c1fbd4] mt-0.5">
                         {cost ? `₹${Number(cost).toFixed(0)}` : `~₹${perHead}`}
                       </div>
                     </div>
@@ -419,8 +419,8 @@ export function NewRideForm() {
                 )}
               </div>
               {notes && (
-                <div className="border-t border-border/40 pt-2.5 text-xs text-muted-foreground">
-                  <span className="font-bold block text-white mb-0.5">Note:</span> {notes}
+                <div className="border-t border-[#1e2c31] pt-2.5 text-xs text-muted-foreground">
+                  <span className="font-medium block text-white mb-0.5">Note:</span> {notes}
                 </div>
               )}
             </div>
@@ -434,7 +434,7 @@ export function NewRideForm() {
           <button 
             type="button" 
             onClick={() => setStep((s) => (s - 1) as typeof step)} 
-            className="btn-neo-secondary px-5 h-11 flex items-center gap-1.5 cursor-pointer"
+            className="rounded-full px-5 h-11 flex items-center gap-1.5 cursor-pointer bg-[#0a0a0a] border border-[#1e2c31] text-white hover:border-[#c1fbd4]/30 transition-colors font-medium"
           >
             <ArrowLeft className="h-4 w-4" /> Back
           </button>
@@ -442,7 +442,7 @@ export function NewRideForm() {
           <Link href="/home">
             <button 
               type="button" 
-              className="btn-neo-secondary px-5 h-11 flex items-center gap-1.5 cursor-pointer"
+              className="rounded-full px-5 h-11 flex items-center gap-1.5 cursor-pointer bg-[#0a0a0a] border border-[#1e2c31] text-white hover:border-[#c1fbd4]/30 transition-colors font-medium"
             >
               <ArrowLeft className="h-4 w-4" /> Back to Home
             </button>
@@ -454,7 +454,7 @@ export function NewRideForm() {
               type="button"
               disabled={(step === 0 && !canNext0) || (step === 1 && !canNext1)}
               onClick={() => setStep((s) => (s + 1) as typeof step)}
-              className="btn-neo-primary px-6 h-11 flex items-center gap-1.5 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+              className="rounded-full px-6 h-11 flex items-center gap-1.5 disabled:opacity-50 disabled:pointer-events-none cursor-pointer bg-[#c1fbd4] text-black hover:bg-[#d4f9e0] font-medium transition-colors"
             >
               Next step <ArrowRight className="h-4 w-4" />
             </button>
@@ -464,7 +464,7 @@ export function NewRideForm() {
               type="button"
               onClick={() => mutation.mutate()} 
               disabled={mutation.isPending} 
-              className="btn-neo-primary px-6 h-11 flex items-center gap-1.5 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+              className="rounded-full px-6 h-11 flex items-center gap-1.5 disabled:opacity-50 disabled:pointer-events-none cursor-pointer bg-[#c1fbd4] text-black hover:bg-[#d4f9e0] font-medium transition-colors"
             >
               {mutation.isPending ? "Posting…" : "Confirm & Post"}
             </button>

@@ -151,7 +151,7 @@ export function CampusRadarMap({ rides = [], activeTrips = [], currentUserId }: 
       const isMine = ride.creator_id === currentUserId;
 
       // Create distinct marker SVG icons
-      const markerColor = isMine ? "#eab308" : isDriver ? "#1DB954" : "#06b6d4";
+      const markerColor = isMine ? "#eab308" : isDriver ? "#c1fbd4" : "#06b6d4";
       const markerSize = isMine ? 11 : 9;
 
       const marker = new window.google!.maps.Marker({
@@ -251,7 +251,7 @@ export function CampusRadarMap({ rides = [], activeTrips = [], currentUserId }: 
 
   if (error) {
     return (
-      <div className="flex h-[600px] w-full flex-col items-center justify-center rounded-2xl border border-border/40 bg-card p-6 text-center">
+      <div className="flex h-[600px] w-full flex-col items-center justify-center rounded-2xl border border-border bg-card p-6 text-center">
         <MapPin className="mb-3 h-10 w-10 text-destructive" />
         <h3 className="text-lg font-bold text-foreground">Unable to Load Map</h3>
         <p className="mt-1 text-sm text-muted-foreground">{error}</p>
@@ -260,9 +260,9 @@ export function CampusRadarMap({ rides = [], activeTrips = [], currentUserId }: 
   }
 
   return (
-    <div className="relative flex h-[calc(100vh-8.5rem)] w-full flex-col overflow-hidden rounded-2xl border border-border/40 bg-[#0d110e] shadow-2xl">
+    <div className="relative flex h-[calc(100vh-8.5rem)] w-full flex-col overflow-hidden rounded-2xl border border-border bg-[#0d110e] shadow-2xl">
       {/* Top Floating Filter Bar */}
-      <div className="absolute left-4 top-4 z-10 flex flex-wrap items-center gap-2 rounded-xl border border-white/10 bg-[#0a0f0b]/90 p-2 backdrop-blur-md shadow-lg">
+      <div className="absolute left-4 top-4 z-10 flex flex-wrap items-center gap-2 rounded-xl border border-white/10 bg-black/90 p-2 backdrop-blur-md shadow-lg">
         <button
           onClick={() => setFilter("all")}
           className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
@@ -278,11 +278,11 @@ export function CampusRadarMap({ rides = [], activeTrips = [], currentUserId }: 
           onClick={() => setFilter("drivers")}
           className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
             filter === "drivers"
-              ? "bg-[#1DB954] text-black shadow-sm shadow-[#1DB954]/30"
+              ? "bg-[#c1fbd4] text-black shadow-sm shadow-[#c1fbd4]/30"
               : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
           }`}
         >
-          <Car className="h-3.5 w-3.5 text-[#1DB954]" /> Drivers ({rides.filter((r) => r.role === "driver").length})
+          <Car className="h-3.5 w-3.5 text-aloe-text" /> Drivers ({rides.filter((r) => r.role === "driver").length})
         </button>
 
         <button
@@ -300,7 +300,7 @@ export function CampusRadarMap({ rides = [], activeTrips = [], currentUserId }: 
           onClick={() => setFilter("live")}
           className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
             filter === "live"
-              ? "bg-red-500 text-white shadow-sm shadow-red-500/30 animate-pulse"
+              ? "bg-red-500 text-foreground shadow-sm shadow-red-500/30 animate-pulse"
               : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
           }`}
         >
@@ -314,14 +314,14 @@ export function CampusRadarMap({ rides = [], activeTrips = [], currentUserId }: 
           className="inline-flex items-center gap-1.5 rounded-lg bg-white/5 px-3 py-1.5 text-xs font-medium text-foreground hover:bg-white/10 transition-colors"
           title="Center on My Location"
         >
-          <LocateFixed className="h-3.5 w-3.5 text-blue-400" /> Center
+          <LocateFixed className="h-3.5 w-3.5 text-aloe-text" /> Center
         </button>
       </div>
 
       {/* Map Legend Overlay (Top Right) */}
-      <div className="absolute right-4 top-4 z-10 hidden sm:flex flex-col gap-1.5 rounded-xl border border-white/10 bg-[#0a0f0b]/90 p-3 backdrop-blur-md text-[11px] font-medium text-muted-foreground shadow-lg">
+      <div className="absolute right-4 top-4 z-10 hidden sm:flex flex-col gap-1.5 rounded-xl border border-white/10 bg-black/90 p-3 backdrop-blur-md text-[11px] font-medium text-muted-foreground shadow-lg">
         <div className="flex items-center gap-2">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#1DB954] inline-block shadow-sm shadow-[#1DB954]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[#c1fbd4] inline-block shadow-sm shadow-[#c1fbd4]" />
           <span>Driver Offering Seat</span>
         </div>
         <div className="flex items-center gap-2">
@@ -354,7 +354,7 @@ export function CampusRadarMap({ rides = [], activeTrips = [], currentUserId }: 
                   <span className="font-bold text-foreground text-sm">
                     {selectedRide.profile?.full_name ?? "Classmate"}
                   </span>
-                  <span className="inline-flex items-center gap-0.5 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[9px] font-bold text-emerald-400 border border-emerald-500/20">
+                  <span className="inline-flex items-center gap-0.5 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[9px] font-bold text-aloe-text border border-emerald-500/20">
                     <ShieldCheck className="h-2.5 w-2.5" /> VIT AP
                   </span>
                 </div>
@@ -378,7 +378,7 @@ export function CampusRadarMap({ rides = [], activeTrips = [], currentUserId }: 
                 variant="outline"
                 className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 ${
                   selectedRide.role === "driver"
-                    ? "border-[#1DB954]/40 bg-[#1DB954]/10 text-[#1DB954]"
+                    ? "border-[#c1fbd4]/40 bg-[#c1fbd4]/10 text-aloe-text"
                     : "border-cyan-500/40 bg-cyan-500/10 text-cyan-400"
                 }`}
               >
@@ -394,7 +394,7 @@ export function CampusRadarMap({ rides = [], activeTrips = [], currentUserId }: 
 
           <div className="mt-3 space-y-2 text-xs text-foreground/90">
             <div className="flex items-start gap-2">
-              <span className="mt-0.5 text-[#1DB954] font-bold">From:</span>
+              <span className="mt-0.5 text-aloe-text font-bold">From:</span>
               <span className="font-medium truncate">{selectedRide.pickup_label}</span>
             </div>
             <div className="flex items-start gap-2">
@@ -416,7 +416,7 @@ export function CampusRadarMap({ rides = [], activeTrips = [], currentUserId }: 
 
           <Button
             onClick={() => router.push(`/rides/${selectedRide.id}`)}
-            className="mt-4 w-full gap-2 font-bold bg-[#1DB954] text-black hover:bg-[#1DB954]/90 shadow-lg shadow-[#1DB954]/20"
+            className="mt-4 w-full gap-2 font-bold bg-[#c1fbd4] text-black hover:bg-[#c1fbd4]/90 shadow-lg shadow-[#c1fbd4]/20"
           >
             {selectedRide.creator_id === currentUserId
               ? "Manage Your Ride Post →"
@@ -460,7 +460,7 @@ export function CampusRadarMap({ rides = [], activeTrips = [], currentUserId }: 
 
           <div className="mt-3 space-y-2 text-xs text-foreground/90">
             <div className="flex items-start gap-2">
-              <span className="mt-0.5 text-emerald-400 font-bold">Pickup:</span>
+              <span className="mt-0.5 text-aloe-text font-bold">Pickup:</span>
               <span className="font-medium truncate">{selectedTrip.pickup_label}</span>
             </div>
             <div className="flex items-start gap-2">
@@ -477,7 +477,7 @@ export function CampusRadarMap({ rides = [], activeTrips = [], currentUserId }: 
 
           <Button
             onClick={() => router.push(`/groups/${selectedTrip.group_id}`)}
-            className="mt-4 w-full gap-2 font-bold bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/20"
+            className="mt-4 w-full gap-2 font-bold bg-red-500 text-foreground hover:bg-red-600 shadow-lg shadow-red-500/20"
           >
             Join Live Group Chat & Navigation →
           </Button>

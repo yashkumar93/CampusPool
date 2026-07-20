@@ -37,19 +37,19 @@ function relTime(iso: string) {
 /* ────────────── quick-action data ────────────── */
 
 const quickActions = [
-  { label: "Offer Ride", icon: CirclePlus, href: "/rides/new?role=driver", color: "from-emerald-500/20 to-emerald-500/5", iconColor: "text-emerald-400" },
-  { label: "Find Ride", icon: Search, href: "/rides/new?role=passenger", color: "from-sky-500/20 to-sky-500/5", iconColor: "text-sky-400" },
-  { label: "Bus Routes", icon: Bus, href: "/bus-routes", color: "from-amber-500/20 to-amber-500/5", iconColor: "text-amber-400" },
-  { label: "Live Map", icon: Navigation, href: "/map", color: "from-violet-500/20 to-violet-500/5", iconColor: "text-violet-400" },
+  { label: "Offer Ride", icon: CirclePlus, href: "/rides/new?role=driver", color: "from-[#c1fbd4]/10 to-transparent", iconColor: "text-aloe-text" },
+  { label: "Find Ride", icon: Search, href: "/rides/new?role=passenger", color: "from-[#c1fbd4]/8 to-transparent", iconColor: "text-aloe-text" },
+  { label: "Bus Routes", icon: Bus, href: "/bus-routes", color: "from-[#d4f9e0]/8 to-transparent", iconColor: "text-pistachio-text" },
+  { label: "Live Map", icon: Navigation, href: "/map", color: "from-[#d4f9e0]/6 to-transparent", iconColor: "text-pistachio-text" },
 ] as const;
 
 /* ────────────── stat card config ────────────── */
 
 const statsConfig = [
-  { icon: IndianRupee, label: "Money saved", fallback: "₹0", gradient: "from-emerald-500/15 to-transparent", iconBg: "bg-emerald-500/15", iconColor: "text-emerald-400" },
-  { icon: Leaf, label: "Carbon saved", fallback: "0 kg", gradient: "from-green-500/15 to-transparent", iconBg: "bg-green-500/15", iconColor: "text-green-400" },
-  { icon: Car, label: "Trips this month", fallback: "0", gradient: "from-sky-500/15 to-transparent", iconBg: "bg-sky-500/15", iconColor: "text-sky-400" },
-  { icon: Route, label: "Favorite route", fallback: "--", gradient: "from-violet-500/15 to-transparent", iconBg: "bg-violet-500/15", iconColor: "text-violet-400" },
+  { icon: IndianRupee, label: "Money saved", fallback: "₹0", gradient: "from-[#c1fbd4]/8 to-transparent", iconBg: "bg-[#c1fbd4]/10", iconColor: "text-aloe-text" },
+  { icon: Leaf, label: "Carbon saved", fallback: "0 kg", gradient: "from-[#c1fbd4]/6 to-transparent", iconBg: "bg-[#c1fbd4]/10", iconColor: "text-aloe-text" },
+  { icon: Car, label: "Trips this month", fallback: "0", gradient: "from-[#d4f9e0]/6 to-transparent", iconBg: "bg-[#d4f9e0]/10", iconColor: "text-pistachio-text" },
+  { icon: Route, label: "Favorite route", fallback: "--", gradient: "from-[#d4f9e0]/5 to-transparent", iconBg: "bg-[#d4f9e0]/10", iconColor: "text-pistachio-text" },
 ] as const;
 
 
@@ -67,17 +67,17 @@ function AiBanner() {
   const viewMatchesHref = latestRide ? `/rides/${latestRide.id}` : "/rides/new";
 
   return (
-    <section className="relative overflow-hidden rounded-2xl border border-[#1DB954]/25 bg-gradient-to-br from-[#1DB954]/10 via-[#1DB954]/5 to-transparent p-5 transition-all duration-300 hover:border-[#1DB954]/40 group">
+    <section className="relative overflow-hidden rounded-2xl border border-[#c1fbd4]/25 bg-gradient-to-br from-[#c1fbd4]/10 via-[#c1fbd4]/5 to-transparent p-5 transition-all duration-300 hover:border-[#c1fbd4]/40 group">
       {/* Animated glow orb */}
-      <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-[#1DB954]/8 blur-2xl transition-all duration-500 group-hover:bg-[#1DB954]/15 group-hover:scale-110" />
-      <div className="absolute -left-4 -bottom-4 h-20 w-20 rounded-full bg-[#1DB954]/5 blur-xl" />
+      <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-[#c1fbd4]/8 blur-2xl transition-all duration-500 group-hover:bg-[#c1fbd4]/15 group-hover:scale-110" />
+      <div className="absolute -left-4 -bottom-4 h-20 w-20 rounded-full bg-[#c1fbd4]/5 blur-xl" />
 
       <div className="relative">
         <div className="flex items-center gap-2 mb-2">
-          <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#1DB954]/20">
-            <Sparkles className="h-3.5 w-3.5 text-[#1DB954]" />
+          <div className="flex h-6 w-6 items-center justify-center rounded-md bg-[#c1fbd4]/20">
+            <Sparkles className="h-3.5 w-3.5 text-aloe-text" />
           </div>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-[#1DB954]">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-aloe-text">
             AI Smart Recommendation
           </span>
         </div>
@@ -86,13 +86,13 @@ function AiBanner() {
         </p>
         <div className="mt-4 flex items-center gap-2">
           <Link href={viewMatchesHref}>
-            <Button size="sm" className="h-8 rounded-lg bg-[#1DB954] text-black font-bold hover:bg-[#1DB954]/90 text-xs px-4 shadow-lg shadow-[#1DB954]/20 transition-all hover:shadow-[#1DB954]/30 hover:scale-[1.02] active:scale-[0.98]">
+            <Button size="sm" className="h-8 rounded-full bg-[#c1fbd4] text-black font-medium hover:bg-[#a8f0be] text-xs px-5 transition-all">
               <Zap className="h-3 w-3 mr-1.5" />
               View matches
             </Button>
           </Link>
           <Link href="/map">
-            <Button size="sm" variant="outline" className="h-8 rounded-lg text-xs px-4 border-[#1DB954]/30 text-[#1DB954] hover:bg-[#1DB954]/10 transition-all">
+            <Button size="sm" variant="outline" className="h-8 rounded-full text-xs px-5 border-white/20 text-aloe-text hover:bg-white/[0.04] hover:border-white/30 transition-all">
               Compare all options
             </Button>
           </Link>
@@ -229,9 +229,9 @@ export default function HomePage() {
 function GeoBanner({ geo }: { geo: ReturnType<typeof useGeolocation> }) {
   if (geo.status === "granted") {
     return (
-      <div className="flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-2.5 text-xs text-emerald-400 font-medium">
-        <div className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/20">
-          <LocateFixed className="h-3 w-3 text-emerald-400" />
+      <div className="flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-2.5 text-xs text-aloe-text font-medium">
+        <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#c1fbd4]/10">
+          <LocateFixed className="h-3 w-3 text-aloe-text" />
         </div>
         Location on — we&apos;ll suggest nearby pickups.
       </div>
@@ -397,7 +397,7 @@ function LiveRides({ onPreviewProfile }: { onPreviewProfile: (id: string) => voi
 
               {/* right */}
               <div className="text-right shrink-0 flex flex-col items-end gap-1">
-                <Badge className={`text-[10px] font-bold px-2 py-0.5 ${r.role === "driver" ? "bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/15" : "bg-sky-500/15 text-sky-400 hover:bg-sky-500/15"}`}>
+                <Badge className={`text-[10px] font-bold px-2 py-0.5 ${r.role === "driver" ? "bg-emerald-500/15 text-aloe-text hover:bg-emerald-500/15" : "bg-sky-500/15 text-sky-400 hover:bg-sky-500/15"}`}>
                   {r.role === "driver" ? "Driver" : "Rider"}
                 </Badge>
                 <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
@@ -459,13 +459,13 @@ function MyRides() {
               <li key={r.id}>
                 <Link
                   href={`/rides/${r.id}`}
-                  className={`block rounded-xl border p-4 transition-all duration-200 group ${isActive ? "border-border/30 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5" : "border-border/20 opacity-70 hover:opacity-100"}`}
+                  className={`block rounded-xl border p-4 transition-all duration-200 group ${isActive ? "border-border/30 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5" : "border-border/50 opacity-70 hover:opacity-100"}`}
                 >
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Badge className={`font-semibold text-[10px] px-2 ${r.role === "driver" ? "bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/15" : "bg-sky-500/15 text-sky-400 hover:bg-sky-500/15"}`}>
+                    <Badge className={`font-semibold text-[10px] px-2 ${r.role === "driver" ? "bg-emerald-500/15 text-aloe-text hover:bg-emerald-500/15" : "bg-sky-500/15 text-sky-400 hover:bg-sky-500/15"}`}>
                       {r.role === "driver" ? "Offering" : "Requesting"}
                     </Badge>
-                    <Badge variant="outline" className={`font-medium capitalize text-[10px] ${isActive ? "border-emerald-500/30 text-emerald-400" : "border-border/40"}`}>
+                    <Badge variant="outline" className={`font-medium capitalize text-[10px] ${isActive ? "border-emerald-500/30 text-aloe-text" : "border-border"}`}>
                       {r.status}
                     </Badge>
                     <span className="ml-auto inline-flex items-center gap-1 text-[10px]" title={formatTime(r.depart_at)}>
@@ -555,7 +555,7 @@ function MyGroups() {
                 className={`block rounded-xl border p-4 transition-all duration-200 group ${hasUnread ? "border-primary/30 bg-primary/[0.03]" : "border-border/30"} hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5`}
               >
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Badge variant="outline" className="capitalize text-[10px] font-medium border-border/40">{g.status}</Badge>
+                  <Badge variant="outline" className="capitalize text-[10px] font-medium border-border">{g.status}</Badge>
                   {hasUnread && (
                     <Badge className="bg-primary text-primary-foreground hover:bg-primary text-[10px] font-bold animate-pulse">
                       {unread[g.id]} new
@@ -612,7 +612,7 @@ function ClassmatesSection({ onPreviewProfile }: { onPreviewProfile: (id: string
     <div>
       <div className="flex items-center gap-2 mb-3">
         <div className="flex h-6 w-6 items-center justify-center rounded-md bg-amber-500/15">
-          <Users className="h-3 w-3 text-amber-400" />
+          <Users className="h-3 w-3 text-pistachio-text" />
         </div>
         <h2 className="text-sm font-bold truncate max-w-[260px]" title={`Classmates at ${collegeName}`}>
           Classmates at {collegeName}
@@ -623,7 +623,7 @@ function ClassmatesSection({ onPreviewProfile }: { onPreviewProfile: (id: string
         {classmates.length === 0 ? (
           <div className="flex flex-col items-center p-8 text-center">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500/15 to-transparent mb-3">
-              <Users className="h-5 w-5 text-amber-400" />
+              <Users className="h-5 w-5 text-pistachio-text" />
             </div>
             <p className="text-xs text-muted-foreground">No other students registered from your college yet.</p>
           </div>
@@ -648,7 +648,7 @@ function ClassmatesSection({ onPreviewProfile }: { onPreviewProfile: (id: string
                         {c.full_name}
                       </span>
                       {c.verified && (
-                        <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#1DB954]/15 text-[#1DB954] text-[8px] font-bold shrink-0">
+                        <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#c1fbd4]/15 text-aloe-text text-[8px] font-bold shrink-0">
                           ✓
                         </span>
                       )}

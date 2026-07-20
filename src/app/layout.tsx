@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Figtree } from "next/font/google";
+import { Bricolage_Grotesque, Figtree, Inter } from "next/font/google";
 // @ts-ignore
 import "../styles.css";
 import { Providers } from "./providers";
@@ -16,6 +16,12 @@ const bricolage = Bricolage_Grotesque({
   variable: "--font-heading-fallback",
   display: "swap",
   weight: ["400", "600", "700", "800"],
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -54,7 +60,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`dark ${figtree.variable} ${bricolage.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`dark ${figtree.variable} ${bricolage.variable} ${inter.variable}`} suppressHydrationWarning>
       <head />
       <body style={{
         ["--font-sans-family" as any]: "var(--font-sans-fallback)",

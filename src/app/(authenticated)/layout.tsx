@@ -18,7 +18,7 @@ export default async function AuthenticatedLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground dark">
+    <div className="flex min-h-screen bg-black text-white dark shopify-scope">
       <AppSidebar />
       <div className="flex-1 flex flex-col ml-60">
         <DashboardTopBar />

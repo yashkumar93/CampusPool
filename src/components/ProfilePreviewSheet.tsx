@@ -35,9 +35,9 @@ export function ProfilePreviewSheet({ userId, open, onOpenChange }: ProfilePrevi
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-md bg-background border-border/40 overflow-y-auto">
+      <SheetContent className="w-full sm:max-w-md bg-card border-border overflow-y-auto">
         <SheetHeader className="pb-2">
-          <SheetTitle className="text-lg font-bold">User Profile</SheetTitle>
+          <SheetTitle className="text-lg font-medium text-foreground">User Profile</SheetTitle>
         </SheetHeader>
 
         {isLoading || !profile ? (
@@ -48,23 +48,23 @@ export function ProfilePreviewSheet({ userId, open, onOpenChange }: ProfilePrevi
           <div className="space-y-6 mt-4">
             {/* Avatar & Name Header */}
             <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 text-primary text-xl font-bold border border-primary/20">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[#c1fbd4]/10 text-aloe-text text-xl font-medium border border-[#c1fbd4]/15">
                 {getInitials(profile.full_name ?? "??")}
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-lg font-bold truncate">{profile.full_name}</h3>
+                  <h3 className="text-lg font-medium text-foreground truncate">{profile.full_name}</h3>
                   {profile.verified && (
-                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#1DB954]/20">
-                      <ShieldCheck className="h-3 w-3 text-[#1DB954]" />
+                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#c1fbd4]/20">
+                      <ShieldCheck className="h-3 w-3 text-aloe-text" />
                     </div>
                   )}
                 </div>
                 {(profile.rating_count ?? 0) > 0 && (
                   <div className="flex items-center gap-1.5 mt-1">
-                    <Star className="h-3.5 w-3.5 fill-primary text-primary" />
-                    <span className="text-sm font-semibold">{Number(profile.rating_avg).toFixed(1)}</span>
-                    <span className="text-xs text-muted-foreground">({profile.rating_count} ratings)</span>
+                    <Star className="h-3.5 w-3.5 fill-[#c1fbd4] text-aloe-text" />
+                    <span className="text-sm font-medium text-foreground">{Number(profile.rating_avg).toFixed(1)}</span>
+                    <span className="text-xs text-[#71717a]">({profile.rating_count} ratings)</span>
                   </div>
                 )}
                 {profile.bio && (
@@ -76,12 +76,12 @@ export function ProfilePreviewSheet({ userId, open, onOpenChange }: ProfilePrevi
             {/* Verification Badges */}
             <div className="flex flex-wrap gap-2">
               {profile.verified && (
-                <Badge className="bg-[#1DB954]/15 text-[#1DB954] hover:bg-[#1DB954]/15 gap-1 font-semibold text-xs">
+                <Badge className="bg-[#c1fbd4]/10 text-aloe-text hover:bg-[#c1fbd4]/10 gap-1 font-medium text-xs rounded-full border-0">
                   <ShieldCheck className="h-3 w-3" /> Verified Student
                 </Badge>
               )}
               {profile.driving_license && (
-                <Badge className="bg-amber-500/15 text-amber-400 hover:bg-amber-500/15 gap-1 font-semibold text-xs">
+                <Badge className="bg-[#d4f9e0]/10 text-pistachio-text hover:bg-[#d4f9e0]/10 gap-1 font-medium text-xs rounded-full border-0">
                   <IdCard className="h-3 w-3" /> License on file
                 </Badge>
               )}
@@ -89,16 +89,16 @@ export function ProfilePreviewSheet({ userId, open, onOpenChange }: ProfilePrevi
 
             {/* Safety/Privacy Notice for partial profiles */}
             {!profile.is_full_profile && (
-              <div className="p-3 bg-primary/10 border border-primary/20 text-xs text-muted-foreground rounded-xl flex items-center gap-2.5">
-                <ShieldCheck className="h-4 w-4 text-primary shrink-0" />
+              <div className="p-3 bg-[#c1fbd4]/5 border border-[#c1fbd4]/15 text-xs text-[#a1a1aa] rounded-xl flex items-center gap-2.5">
+                <ShieldCheck className="h-4 w-4 text-aloe-text shrink-0" />
                 <span>Contact details are locked for safety. Send a request to team up or join to unlock phone number and email!</span>
               </div>
             )}
 
             {/* Details Grid */}
             <div className="space-y-1">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">Contact & Details</h4>
-              <div className="rounded-xl border border-border/30 bg-card overflow-hidden divide-y divide-border/15">
+              <h4 className="text-xs font-medium uppercase tracking-wider text-[#71717a] mb-3">Contact & Details</h4>
+              <div className="rounded-xl border border-border bg-card overflow-hidden divide-y divide-[#1e2c31]/50">
                 {profile.phone ? (
                   <ProfileRow icon={Phone} label="Phone" value={profile.phone} />
                 ) : !profile.is_full_profile ? (
@@ -141,8 +141,8 @@ export function ProfilePreviewSheet({ userId, open, onOpenChange }: ProfilePrevi
 function ProfileRow({ icon: Icon, label, value }: { icon: React.ElementType; label: string; value: string }) {
   return (
     <div className="flex items-center gap-3 px-4 py-3">
-      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-muted/50">
-        <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/[0.04]">
+        <Icon className="h-3.5 w-3.5 text-[#71717a]" />
       </div>
       <div className="min-w-0 flex-1">
         <div className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">{label}</div>
