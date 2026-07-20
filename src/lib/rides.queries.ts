@@ -192,8 +192,8 @@ export async function listIncomingRequests({ rideId }: { rideId: string }) {
   const ids = Array.from(new Set((reqs ?? []).map((r) => r.requester_id)));
   const { data: profiles } = ids.length
     ? await supabase
-        .from("profiles")
-        .select("id, full_name, department, year, rating_avg, rating_count, avatar_url, phone")
+        .from("profiles_public")
+        .select("id, full_name, department, year, rating_avg, rating_count, avatar_url")
         .in("id", ids)
     : { data: [] };
 
