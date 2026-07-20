@@ -332,7 +332,7 @@ export function RideMatchesDetail({ rideId }: { rideId: string }) {
           </div>
         )}
 
-        {isDriverOffer && incoming && incoming.length > 0 && (
+        {isMine && incoming && incoming.length > 0 && (
           <section className="mb-4">
             <h2 className="text-lg font-semibold flex items-center gap-2">
               <Inbox className="h-4 w-4 text-primary" /> Join requests
