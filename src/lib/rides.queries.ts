@@ -329,9 +329,13 @@ export async function getLatestTripLocation({ groupId }: { groupId: string }) {
 export async function getMyProfile() {
   if (typeof window === "undefined") return null;
 
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+
   const { data: profile, error } = await supabase
     .from("profiles")
     .select("*")
+    .eq("id", user.id)
     .single();
   if (error) throw new Error(error.message);
   return profile;
