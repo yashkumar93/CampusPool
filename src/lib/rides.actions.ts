@@ -103,13 +103,22 @@ export async function joinMatch(rawInput: unknown) {
 
 export async function sendMessage(rawInput: unknown) {
   const { supabase, userId } = await requireAuth();
-  const { groupId, body } = z
-    .object({ groupId: z.string().uuid(), body: z.string().min(1).max(1000) })
+  const { groupId, body, reply_to } = z
+    .object({
+      groupId: z.string().uuid(),
+      body: z.string().min(1).max(1000),
+      reply_to: z.string().uuid().optional(),
+    })
     .parse(rawInput);
 
   const { data: msg, error } = await supabase
     .from("messages")
-    .insert({ group_id: groupId, user_id: userId, body: body.trim() })
+    .insert({
+      group_id: groupId,
+      user_id: userId,
+      body: body.trim(),
+      ...(reply_to ? { reply_to } : {}),
+    } as Record<string, unknown>)
     .select("*")
     .single();
   if (error) throw new Error(error.message);

@@ -13,6 +13,7 @@ import {
   User,
   ShieldAlert,
   Zap,
+  MessageCircle,
 } from "lucide-react";
 
 import { useRouter } from "next/navigation";
@@ -34,6 +35,7 @@ import {
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/home" },
+  { label: "Chats", icon: MessageCircle, href: "/chats" },
   { label: "Find Ride", icon: Search, href: "/rides/new?role=passenger" },
   { label: "Offer Ride", icon: CarFront, href: "/rides/new?role=driver" },
   { label: "Compare", icon: GitCompare, href: "/home" },

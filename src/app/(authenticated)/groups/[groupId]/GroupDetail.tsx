@@ -1,9 +1,8 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
-  sendMessage,
   submitRating,
   completeRide,
   startTrip,
@@ -15,12 +14,12 @@ import {
 } from "@/lib/rides.queries";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { MapPin, Send, Star, Users, Phone, CheckCircle2, Play, IndianRupee, Radio, ArrowDown, ArrowLeft } from "lucide-react";
+import { MapPin, Star, Users, Phone, CheckCircle2, Play, IndianRupee, Radio, ArrowLeft } from "lucide-react";
 import { TripMap } from "@/components/TripMap";
 import { TripTimeline } from "@/components/TripTimeline";
+import { ChatPanel } from "@/components/ChatPanel";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -42,15 +41,7 @@ function getDistance(p1: LatLng, p2: LatLng) {
   return R * c;
 }
 
-function msgTime(iso: string) {
-  const d = new Date(iso);
-  const now = new Date();
-  const diffMs = now.getTime() - d.getTime();
-  const diffMin = Math.floor(diffMs / 60_000);
-  if (diffMin < 1) return "now";
-  if (diffMin < 60) return `${diffMin}m ago`;
-  return d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
-}
+
 
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/);
@@ -77,16 +68,10 @@ export function GroupDetail({ groupId }: { groupId: string }) {
     queryFn: () => getGroup({ groupId }),
   });
 
-  const [body, setBody] = useState("");
   const [driverLoc, setDriverLoc] = useState<{ lat: number; lng: number } | null>(null);
   const [broadcasting, setBroadcasting] = useState(false);
-  const [typingUsers, setTypingUsers] = useState<Record<string, number>>({});
-  const [showScrollBtn, setShowScrollBtn] = useState(false);
   const [hoverStar, setHoverStar] = useState<Record<string, number>>({});
   const watchIdRef = useRef<number | null>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const typingChannelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
-  const lastTypingSentRef = useRef(0);
   const completingRef = useRef(false);
 
   useEffect(() => {
@@ -99,12 +84,7 @@ export function GroupDetail({ groupId }: { groupId: string }) {
 
   useEffect(() => {
     const channel = supabase
-      .channel(`messages-${groupId}`)
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "messages", filter: `group_id=eq.${groupId}` },
-        () => qc.invalidateQueries({ queryKey: ["group", groupId] }),
-      )
+      .channel(`group-status-${groupId}`)
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "trip_locations", filter: `group_id=eq.${groupId}` },
@@ -124,44 +104,7 @@ export function GroupDetail({ groupId }: { groupId: string }) {
     };
   }, [groupId, qc]);
 
-  useEffect(() => {
-    const ch = supabase.channel(`typing-${groupId}`, { config: { broadcast: { self: false } } });
-    ch.on("broadcast", { event: "typing" }, ({ payload }) => {
-      const uid = (payload as { userId?: string; name?: string })?.userId;
-      const name = (payload as { userId?: string; name?: string })?.name ?? "Someone";
-      if (!uid) return;
-      setTypingUsers((prev) => ({ ...prev, [uid]: Date.now() }));
-      setTimeout(() => {
-        setTypingUsers((prev) => {
-          const now = Date.now();
-          const next: Record<string, number> = {};
-          for (const [k, t] of Object.entries(prev)) if (now - t < 2500) next[k] = t;
-          return next;
-        });
-        void name;
-      }, 3000);
-    }).subscribe();
-    typingChannelRef.current = ch;
-    return () => {
-      supabase.removeChannel(ch);
-      typingChannelRef.current = null;
-    };
-  }, [groupId]);
-
   const members = data?.members ?? [];
-
-  const notifyTyping = useCallback(() => {
-    const now = Date.now();
-    if (now - lastTypingSentRef.current < 1500) return;
-    lastTypingSentRef.current = now;
-    const ch = typingChannelRef.current;
-    if (!ch || !data) return;
-    void ch.send({
-      type: "broadcast",
-      event: "typing",
-      payload: { userId: data.currentUserId, name: members.find((m) => m.user_id === data.currentUserId)?.profile?.full_name ?? "Someone" },
-    });
-  }, [data, members]);
 
   useEffect(() => {
     getLatestTripLocation({ groupId })
@@ -171,32 +114,7 @@ export function GroupDetail({ groupId }: { groupId: string }) {
       .catch(() => {});
   }, [groupId]);
 
-  useEffect(() => {
-    if (!showScrollBtn) {
-      scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
-    }
-  }, [data?.messages.length, showScrollBtn]);
 
-  const handleScroll = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 60;
-    setShowScrollBtn(!atBottom);
-  }, []);
-
-  function scrollToBottom() {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-    setShowScrollBtn(false);
-  }
-
-  const sendMut = useMutation({
-    mutationFn: () => sendMessage({ groupId, body: body.trim() }),
-    onSuccess: () => {
-      setBody("");
-      qc.invalidateQueries({ queryKey: ["group", groupId] });
-    },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed to send"),
-  });
 
   const rateMut = useMutation({
     mutationFn: (input: { rateeId: string; stars: number }) =>
@@ -220,9 +138,6 @@ export function GroupDetail({ groupId }: { groupId: string }) {
   if (isLoading || !data || !data.group) return <div className="text-sm text-muted-foreground">Loading group…</div>;
 
   const { group, messages, currentUserId, ratedUserIds } = data;
-  const typingNames = Object.keys(typingUsers)
-    .filter((uid) => uid !== currentUserId)
-    .map((uid) => members.find((m) => m.user_id === uid)?.profile?.full_name ?? "Someone");
   const isCreator = group.created_by === currentUserId;
   const isDriver = group.driver_id === currentUserId;
   const isCompleted = group.status === "completed";
@@ -298,12 +213,7 @@ export function GroupDetail({ groupId }: { groupId: string }) {
     onError: (e) => toast.error(e instanceof Error ? e.message : "Failed"),
   });
 
-  // Group consecutive messages from same sender
-  const groupedMessages = messages.map((m, i) => {
-    const prev = i > 0 ? messages[i - 1] : null;
-    const isFirst = !prev || prev.user_id !== m.user_id;
-    return { ...m, isFirstInGroup: isFirst };
-  });
+
 
   return (
     <div className="space-y-4">
@@ -373,78 +283,13 @@ export function GroupDetail({ groupId }: { groupId: string }) {
           </div>
         )}
 
-        <div className="surface-card flex h-[520px] flex-col relative">
-          <div ref={scrollRef} onScroll={handleScroll} className="relative flex-1 space-y-0.5 overflow-y-auto p-4">
-            {messages.length === 0 ? (
-              <div className="flex h-full items-center justify-center text-sm text-muted-foreground">Say hi 👋</div>
-            ) : (
-              groupedMessages.map((m) => {
-                const mine = m.user_id === currentUserId;
-                const author = members.find((x) => x.user_id === m.user_id)?.profile;
-                return (
-                  <div key={m.id} className={cn("flex", mine ? "justify-end" : "justify-start", m.isFirstInGroup ? "pt-3" : "pt-0.5")}>
-                    <div className={cn("max-w-[75%] rounded-lg px-3 py-2 text-sm", mine ? "bg-primary text-primary-foreground" : "bg-muted")}>
-                      {!mine && author && m.isFirstInGroup && (
-                        <div className="text-xs font-medium opacity-70 mb-0.5">{author.full_name}</div>
-                      )}
-                      <div>{m.body}</div>
-                      <div className={cn("text-[10px] mt-0.5", mine ? "text-primary-foreground/60" : "text-muted-foreground")}>
-                        {msgTime(m.created_at)}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
-          {/* Scroll to bottom button */}
-          {showScrollBtn && (
-            <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10">
-              <Button
-                size="sm"
-                variant="secondary"
-                className="rounded-full shadow-lg gap-1 h-7 px-3 text-xs"
-                onClick={scrollToBottom}
-              >
-                <ArrowDown className="h-3 w-3" /> New messages
-              </Button>
-            </div>
-          )}
-          {typingNames.length > 0 && (
-            <div className="border-t border-border/60 px-4 py-1.5 text-xs text-muted-foreground">
-              <span className="inline-flex items-center gap-1">
-                <span className="flex gap-0.5">
-                  <span className="h-1 w-1 animate-bounce rounded-full bg-primary [animation-delay:-0.2s]" />
-                  <span className="h-1 w-1 animate-bounce rounded-full bg-primary [animation-delay:-0.1s]" />
-                  <span className="h-1 w-1 animate-bounce rounded-full bg-primary" />
-                </span>
-                {typingNames.slice(0, 2).join(", ")}
-                {typingNames.length > 2 ? ` +${typingNames.length - 2}` : ""} typing…
-              </span>
-            </div>
-          )}
-          <form
-            className="flex gap-2 border-t border-border/60 p-3"
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (!body.trim() || isCompleted) return;
-              sendMut.mutate();
-            }}
-          >
-            <Input
-              value={body}
-              onChange={(e) => {
-                setBody(e.target.value);
-                if (e.target.value.trim()) notifyTyping();
-              }}
-              placeholder={isCompleted ? "Ride completed" : "Type a message"}
-              disabled={isCompleted}
-            />
-            <Button type="submit" size="icon" disabled={!body.trim() || sendMut.isPending || isCompleted}>
-              <Send className="h-4 w-4" />
-            </Button>
-          </form>
-        </div>
+        <ChatPanel
+          groupId={groupId}
+          currentUserId={currentUserId}
+          members={members}
+          messages={messages}
+          isCompleted={isCompleted}
+        />
 
         {isCreator && !isCompleted && (
           <Button variant="outline" className="gap-1.5" onClick={() => completeMut.mutate()}>
