@@ -288,7 +288,7 @@ export async function getGroup({ groupId }: { groupId: string }) {
 
   const { data: messages } = await supabase
     .from("messages")
-    .select("*")
+    .select("id, group_id, user_id, body, created_at, reply_to")
     .eq("group_id", groupId)
     .order("created_at", { ascending: true })
     .limit(200);

@@ -219,23 +219,7 @@ export function NewRideForm() {
             {/* Time presets */}
             <div className="space-y-1.5">
               <Label className="text-white font-medium">Departure Time</Label>
-              <div className="flex flex-wrap gap-2 mb-3">
-                {[
-                  { label: "Now", offset: 5 },
-                  { label: "+30 mins", offset: 30 },
-                  { label: "+1 hour", offset: 60 },
-                  { label: "+2 hours", offset: 120 },
-                ].map((preset) => (
-                  <button
-                    key={preset.label}
-                    type="button"
-                    onClick={() => setDepartAt(makeDepartLocal(preset.offset))}
-                    className="inline-flex items-center gap-1 rounded-full border border-[#1e2c31] bg-[#0a0a0a] text-white px-3.5 py-1.5 text-xs font-medium hover:bg-[#c1fbd4]/10 hover:border-[#c1fbd4]/30 hover:text-[#c1fbd4] transition-all cursor-pointer"
-                  >
-                    <Zap className="h-3 w-3 fill-current" /> {preset.label}
-                  </button>
-                ))}
-              </div>
+
               <div className="grid gap-4 sm:grid-cols-3">
                 <div className="sm:col-span-2">
                   <Input 
@@ -244,11 +228,12 @@ export function NewRideForm() {
                     value={departAt} 
                     onChange={(e) => setDepartAt(e.target.value)} 
                     required 
-                    className="bg-[#0a0a0a] border border-[#1e2c31] text-white placeholder:text-[#71717a] focus-visible:ring-[#c1fbd4]/30 h-11 rounded-lg"
+                    style={{ colorScheme: 'dark' }}
+                    className="bg-[#0a0a0a] border border-[#1e2c31] text-white placeholder:text-[#71717a] focus-visible:ring-[#c1fbd4]/30 h-11 rounded-lg w-full block cursor-pointer"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="flex" className="text-white font-medium">Flex window (mins)</Label>
+                  <Label htmlFor="flex" className="text-white font-medium">Wait time flexibility (mins)</Label>
                   <Input 
                     id="flex" 
                     type="number" 
