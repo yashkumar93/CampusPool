@@ -133,6 +133,7 @@ export const ALLOWED_EMAIL_DOMAINS = [
   "coep.org.in",
   "pccoepune.com",
   "nxtwave.co.in"
+  "geetauniversity.edu.in"
 ];
 
 export const CAMPUSES: CampusConfig[] = [
