@@ -69,6 +69,7 @@ const ORGANIZATIONS: { name: string; campusId: string; domain: string }[] = [
   { name: "Bannari Amman Institute of Technology", campusId: "other", domain: "bitsathy.ac.in" },
   { name: "Velalar College of Engineering and Technology", campusId: "other", domain: "velalarengg.ac.in" },
   { name: "NxtWave", campusId: "other", domain: "nxtwave.co.in" },
+  { name: "Geeta University", campusId: "other", domain: "geetauniversity.edu.in" },
 ];
 
 export function AuthForm() {
